@@ -1,10 +1,13 @@
 package backend.model;
 
+import javafx.scene.paint.Color;
+
 public class Ellipse extends Figure {
     protected final Point centerPoint;
     protected final double dx, dy;
 
-    public Ellipse(Point centerPoint, double dx, double dy) {
+    public Ellipse(double lineWidth, Color lineColor, Color fillColor, Point centerPoint, double dx, double dy) {
+        super(lineWidth, lineColor, fillColor);
         this.centerPoint = centerPoint;
         this.dx = dx;
         this.dy = dy;

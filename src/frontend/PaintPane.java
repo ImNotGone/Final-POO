@@ -22,8 +22,6 @@ public class PaintPane extends BorderPane {
 	// Canvas y relacionados
 	Canvas canvas = new Canvas(800, 600);
 	GraphicsContext gc = canvas.getGraphicsContext2D();
-	Color lineColor = Color.BLACK;
-	Color fillColor = Color.YELLOW;
 
 	// Botones Barra Izquierda
 	ToggleButton selectionButton = new ToggleButton("Seleccionar");
@@ -34,11 +32,12 @@ public class PaintPane extends BorderPane {
 	ToggleButton lineButton = new ToggleButton("Línea");
 
 	// Sliders
-	Slider lineThicknessSlider = new Slider(1, 50, 25);
+	Slider lineWidthSlider = new Slider(1, 50, 25);
 
 	// ColorPicker
-	final ColorPicker lineColorPicker = new ColorPicker(fillColor);
-	final ColorPicker fillColorPicker = new ColorPicker(lineColor);
+	ColorPicker lineColorPicker = new ColorPicker(Color.BLACK);
+	ColorPicker fillColorPicker = new ColorPicker(Color.YELLOW);
+
 	// Dibujar una figura
 	Point startPoint;
 
@@ -59,24 +58,21 @@ public class PaintPane extends BorderPane {
 			tool.setCursor(Cursor.HAND);
 		}
 
-		lineThicknessSlider.setShowTickMarks(true);
-		lineThicknessSlider.setBlockIncrement(1f);
+		lineWidthSlider.setShowTickMarks(true);
+		lineWidthSlider.setBlockIncrement(1f);
 
+		
 		VBox buttonsBox = new VBox(10);
 		// Buttons
 		buttonsBox.getChildren().addAll(toolsArr);
 		// Slider
-		buttonsBox.getChildren().add(lineThicknessSlider);
+		buttonsBox.getChildren().add(lineWidthSlider);
 		// ColorPickers
 		buttonsBox.getChildren().add(lineColorPicker);
 		buttonsBox.getChildren().add(fillColorPicker);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
-		gc.setLineWidth(1);
-
-		lineColorPicker.setOnAction(event -> lineColor = lineColorPicker.getValue());
-		fillColorPicker.setOnAction(event -> fillColor = fillColorPicker.getValue());
 
 		canvas.setOnMousePressed(event -> {
 			startPoint = new Point(event.getX(), event.getY());
@@ -91,20 +87,20 @@ public class PaintPane extends BorderPane {
 			}
 			Figure newFigure = null;
 			if(rectangleButton.isSelected()) {
-				newFigure = new Rectangle(startPoint, endPoint);
+				newFigure = new Rectangle(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, endPoint);
 			} else if(circleButton.isSelected()) {
 				double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
-				newFigure = new Circle(startPoint, circleRadius);
+				newFigure = new Circle(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, circleRadius);
 			} else if(squareButton.isSelected()) {
-				newFigure = new Square(startPoint, Math.abs(startPoint.getX() - endPoint.getX()));
+				newFigure = new Square(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, Math.abs(startPoint.getX() - endPoint.getX()));
 			} else if(ellipseButton.isSelected()) {
 				double dx = Math.abs(startPoint.getX() - endPoint.getX());
 				double dy = Math.abs(startPoint.getY() - endPoint.getY());
 				double x = (startPoint.getX()+endPoint.getX())/2;
 				double y = (startPoint.getY()+endPoint.getY())/2;
-				newFigure = new Ellipse(new Point(x, y),dx,dy);
+				newFigure = new Ellipse(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), new Point(x, y),dx,dy);
 			} else if(lineButton.isSelected()) {
-				newFigure = new Line(startPoint, endPoint);
+				newFigure = new Line(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, endPoint);
 			} else {
 				return ;
 			}
@@ -171,9 +167,10 @@ public class PaintPane extends BorderPane {
 			if (figure == selectedFigure) {
 				gc.setStroke(Color.RED);
 			} else {
-				gc.setStroke(lineColor);
+				gc.setStroke(figure.getLineColor());
 			}
-			gc.setFill(fillColor);
+			gc.setLineWidth(figure.getLineThickness());
+			gc.setFill(figure.getfillColor());
 			if (figure instanceof Rectangle) {
 				Rectangle rectangle = (Rectangle) figure;
 				gc.fillRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),

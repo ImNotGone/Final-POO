@@ -3,40 +3,44 @@ package backend.model;
 import javafx.scene.paint.Color;
 
 public abstract class Figure {
-    private double lineThickness;
+    private double lineWidth;
     private Color lineColor;
-    private Color backgroundColor;
+    private Color fillColor;
 
     public abstract boolean contains(Point point);
     public abstract void moveFigure(double diffX, double diffY);
 
-    public void setFigureProperties(double lineThickness, Color lineColor, Color backgroundColor) {
-        setLineThickness(lineThickness);
+    public Figure(double lineWidth, Color lineColor, Color fillColor){
+        setFigureProperties(lineWidth, lineColor, fillColor);
+    }
+
+    public void setFigureProperties(double lineWidth, Color lineColor, Color fillColor) {
+        setLineWidth(lineWidth);
         setLineColor(lineColor);
-        setBackgroundColor(backgroundColor);
+        setFillColor(fillColor);
     }
 
     public Color getLineColor() {
         return lineColor;
     }
 
-    public Color getBackgroundColor() {
-        return backgroundColor;
+    public Color getfillColor() {
+        return fillColor;
     }
 
     public double getLineThickness() {
-        return lineThickness;
+        return lineWidth;
     }
 
-    public void setLineThickness(double lineThickness){
-        this.lineThickness = lineThickness;
+    public void setLineWidth(double lineWidth){
+        this.lineWidth = lineWidth;
     }
 
     public void setLineColor(Color lineColor){
         this.lineColor = lineColor;
     }
 
-    public void setBackgroundColor(Color backgroundColor){
-        this.backgroundColor = backgroundColor;
+    public void setFillColor(Color fillColor){
+        this.fillColor = fillColor;
     }
 }
