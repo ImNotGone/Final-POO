@@ -29,7 +29,7 @@ public class Ellipse extends Figure {
 
     @Override
     public boolean contains(Point point) {
-        return ((Math.pow(point.getX() - centerPoint.getX(), 2)/Math.pow(dx, 2)) + (Math.pow(point.getY() - centerPoint.getY(), 2)/Math.pow(dy, 2))) <= 1;
+        return ((Math.pow(point.getX() - centerPoint.getX(), 2)/Math.pow((dx/2), 2)) + (Math.pow(point.getY() - centerPoint.getY(), 2)/Math.pow((dy/2), 2))) <= 1;
     }
 
     @Override
