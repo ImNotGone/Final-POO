@@ -17,17 +17,16 @@ public class Point {
         return y;
     }
 
-    public void incX(double inc) {
-        this.x += inc;
+    public void move(double diffX, double diffY) {
+        this.x += diffX;
+        this.y += diffY;
     }
 
-    public void incY(double inc){
-        this.y += inc;
-    }
 
     @Override
     public String toString() {
         return String.format("{%.2f , %.2f}", x, y);
     }
+
 
 }
