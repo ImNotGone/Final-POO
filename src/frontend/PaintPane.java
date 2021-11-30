@@ -25,11 +25,16 @@ public class PaintPane extends BorderPane {
 
 	// Botones Barra Izquierda
 	ToggleButton selectionButton = new ToggleButton("Seleccionar");
-	ToggleButton rectangleButton = new ToggleButton("Rectángulo");
-	ToggleButton circleButton = new ToggleButton("Círculo");
-	ToggleButton squareButton = new ToggleButton("Cuadrado");
-	ToggleButton ellipseButton = new ToggleButton("Elipse");
-	ToggleButton lineButton = new ToggleButton("Línea");
+	FigureToggleButton rectangleButton = new FigureToggleButton("Rectángulo", (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Rectangle(lineWidth, lineColor, fillColor, startPoint, endPoint));
+	FigureToggleButton circleButton = new FigureToggleButton("Círculo", (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Circle(lineWidth, lineColor, fillColor, startPoint, Math.abs(endPoint.getX() - startPoint.getX())));
+	FigureToggleButton squareButton = new FigureToggleButton("Cuadrado", (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Square(lineWidth, lineColor, fillColor, startPoint, Math.abs(startPoint.getX() - endPoint.getX())));
+	FigureToggleButton ellipseButton = new FigureToggleButton("Elipse", (lineWidth, lineColor, fillColor, startPoint, endPoint) ->
+	{double dx = Math.abs(startPoint.getX() - endPoint.getX());
+		double dy = Math.abs(startPoint.getY() - endPoint.getY());
+		double x = (startPoint.getX()+endPoint.getX())/2;
+		double y = (startPoint.getY()+endPoint.getY())/2;
+		return new Ellipse(lineWidth, lineColor, fillColor, new Point(x, y),dx,dy);});
+	FigureToggleButton lineButton = new FigureToggleButton("Línea", (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Line(lineWidth, lineColor, fillColor, startPoint, endPoint));
 
 	// Sliders
 	Slider lineWidthSlider = new Slider(1, 50, 25);
@@ -51,6 +56,7 @@ public class PaintPane extends BorderPane {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
 		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, lineButton};
+		FigureToggleButton[] figureToggleButtonArr = {rectangleButton, circleButton, squareButton, ellipseButton, lineButton};
 		ToggleGroup tools = new ToggleGroup();
 		for (ToggleButton tool : toolsArr) {
 			tool.setMinWidth(90);
@@ -85,26 +91,11 @@ public class PaintPane extends BorderPane {
 			if((endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) && !lineButton.isSelected()) {
 				return ;
 			}
-			Figure newFigure = null;
-			if(rectangleButton.isSelected()) {
-				newFigure = new Rectangle(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, endPoint);
-			} else if(circleButton.isSelected()) {
-				double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
-				newFigure = new Circle(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, circleRadius);
-			} else if(squareButton.isSelected()) {
-				newFigure = new Square(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, Math.abs(startPoint.getX() - endPoint.getX()));
-			} else if(ellipseButton.isSelected()) {
-				double dx = Math.abs(startPoint.getX() - endPoint.getX());
-				double dy = Math.abs(startPoint.getY() - endPoint.getY());
-				double x = (startPoint.getX()+endPoint.getX())/2;
-				double y = (startPoint.getY()+endPoint.getY())/2;
-				newFigure = new Ellipse(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), new Point(x, y),dx,dy);
-			} else if(lineButton.isSelected()) {
-				newFigure = new Line(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, endPoint);
-			} else {
-				return ;
+			for (FigureToggleButton figureButton : figureToggleButtonArr) {
+				if(figureButton.isSelected()) {
+					canvasState.addFigure(figureButton.getFigure(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, endPoint));
+				}
 			}
-			canvasState.addFigure(newFigure);
 			startPoint = null;
 			redrawCanvas();
 		});
