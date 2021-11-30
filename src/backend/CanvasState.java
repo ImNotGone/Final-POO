@@ -6,23 +6,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class CanvasState {
+public class CanvasState extends ArrayList<Figure>{
 
-    private final List<Figure> list = new ArrayList<>();
+    public CanvasState(){
+        super();
+    }
 
     public boolean addFigure(Figure figure) {
-        return list.add(figure);
+        return this.add(figure);
     }
 
-    public Iterable<Figure> figures() {
-        return new ArrayList<>(list);
+    public List<Figure> figures() {
+        return new ArrayList<>(this);
     }
 
-    public boolean removeAll(Collection<Figure> figures) {
-        return list.removeAll(figures);
-    }
 
-    public boolean addAll(Collection<Figure> figures) {
-        return list.addAll(figures);
-    }
 }
