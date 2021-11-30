@@ -107,6 +107,26 @@ public class PaintPane extends BorderPane {
 		canvas.setOnMousePressed(event -> {
 			startPoint = new Point(event.getX(), event.getY());
 		});
+		lineWidthSlider.setOnMouseDragged((event) -> {
+			for(Figure figure : selectedFigures) {
+				figure.setLineWidth(lineWidthSlider.getValue());
+			}
+			redrawCanvas();
+		});
+		lineColorPicker.setOnAction((event) -> {
+			for(Figure figure : selectedFigures) {
+				figure.setLineColor(lineColorPicker.getValue());
+			}
+			//selectedFigures = new ArrayList<>();
+			redrawCanvas();
+		});
+		fillColorPicker.setOnAction((event) -> {
+			for(Figure figure : selectedFigures) {
+				figure.setFillColor(fillColorPicker.getValue());
+			}
+			//selectedFigures = new ArrayList<>();
+			redrawCanvas();
+		});
 
 		canvas.setOnMouseReleased(event -> {
 			Point endPoint = new Point(event.getX(), event.getY());
@@ -114,7 +134,7 @@ public class PaintPane extends BorderPane {
 				return ;
 			}
 			if((endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) && !lineButton.isSelected()) {
-				return ;
+				return;
 			}
 			for (FigureToggleButton figureButton : figureToggleButtonArr) {
 				if(figureButton.isSelected()) {
