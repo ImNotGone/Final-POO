@@ -3,6 +3,7 @@ package backend;
 import backend.model.Figure;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class CanvasState {
@@ -17,7 +18,11 @@ public class CanvasState {
         return new ArrayList<>(list);
     }
 
-    public boolean remove(Figure figure) {
-        return list.remove(figure);
+    public boolean removeAll(Collection<Figure> figures) {
+        return list.removeAll(figures);
+    }
+
+    public boolean addAll(Collection<Figure> figures) {
+        return list.addAll(figures);
     }
 }
