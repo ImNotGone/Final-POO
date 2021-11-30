@@ -36,6 +36,15 @@ public class Ellipse extends Figure {
     }
 
     @Override
+    public boolean isContained(Figure figure) {
+        Point left = new Point(centerPoint.getX() - dx/2, centerPoint.getY());
+        Point right = new Point(centerPoint.getX() + dx/2, centerPoint.getY());
+        Point bottom = new Point(centerPoint.getX(), centerPoint.getY() + dy/2);
+        Point top = new Point(centerPoint.getX(), centerPoint.getY() - dy/2);
+        return figure.contains(left) && figure.contains(right) && figure.contains(bottom) && figure.contains(top);
+    }
+
+    @Override
     public void moveFigure(double diffX, double diffY) {
         centerPoint.move(diffX, diffY);
     }

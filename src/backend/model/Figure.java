@@ -8,6 +8,7 @@ public abstract class Figure {
     private Color fillColor;
 
     public abstract boolean contains(Point point);
+    public abstract boolean isContained(Figure figure);
     public abstract void moveFigure(double diffX, double diffY);
 
     public Figure(double lineWidth, Color lineColor, Color fillColor){

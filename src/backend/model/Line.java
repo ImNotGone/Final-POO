@@ -22,6 +22,11 @@ public class Line extends Figure {
     }
 
     @Override
+    public boolean isContained(Figure figure) {
+        return figure.contains(start) && figure.contains(end);
+    }
+
+    @Override
     public void moveFigure(double diffX, double diffY) {
         start.move(diffX, diffY);
         end.move(diffX, diffY);
