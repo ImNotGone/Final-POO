@@ -33,6 +33,8 @@ public class PaintPane extends BorderPane {
 		double y = (startPoint.getY()+endPoint.getY())/2;
 		return new Ellipse(lineWidth, lineColor, fillColor, new Point(x, y),dx,dy);});
 	FigureToggleButton lineButton = new FigureToggleButton("Línea", (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Line(lineWidth, lineColor, fillColor, startPoint, endPoint));
+	
+	ToggleButton deleteButton = new ToggleButton("Borrar");
 
 	// Sliders
 	Slider lineWidthSlider = new Slider(1, 50, 25);
@@ -59,7 +61,7 @@ public class PaintPane extends BorderPane {
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
-		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, lineButton};
+		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, lineButton, deleteButton};
 		FigureToggleButton[] figureToggleButtonArr = {rectangleButton, circleButton, squareButton, ellipseButton, lineButton};
 		ToggleGroup tools = new ToggleGroup();
 		for (ToggleButton tool : toolsArr) {
@@ -88,6 +90,8 @@ public class PaintPane extends BorderPane {
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
+
+		deleteButton.setOnAction(event -> {canvasState.remove(selectedFigure); redrawCanvas();});
 
 		canvas.setOnMousePressed(event -> {
 			startPoint = new Point(event.getX(), event.getY());

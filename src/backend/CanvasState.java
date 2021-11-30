@@ -9,12 +9,15 @@ public class CanvasState {
 
     private final List<Figure> list = new ArrayList<>();
 
-    public void addFigure(Figure figure) {
-        list.add(figure);
+    public boolean addFigure(Figure figure) {
+        return list.add(figure);
     }
 
     public Iterable<Figure> figures() {
         return new ArrayList<>(list);
     }
 
+    public boolean remove(Figure figure) {
+        return list.remove(figure);
+    }
 }

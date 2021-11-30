@@ -43,4 +43,7 @@ public abstract class Figure {
     public void setFillColor(Color fillColor){
         this.fillColor = fillColor;
     }
+
+
+    
 }
