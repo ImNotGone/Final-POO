@@ -24,4 +24,11 @@ public class Line extends Figure {
         end.move(diffX, diffY);
     }
 
+    public Point getStart() {
+        return start;
+    }
+
+    public Point getEnd() {
+        return end;
+    }
 }

@@ -29,12 +29,11 @@ public class Ellipse extends Figure {
 
     @Override
     public boolean contains(Point point) {
-        return (Math.abs((point.getX() - centerPoint.getX())) < (dx/2)) && (Math.abs((point.getY() - centerPoint.getY())) < (dy/2));
+        return ((Math.pow(point.getX() - centerPoint.getX(), 2)/Math.pow(dx, 2)) + (Math.pow(point.getY() - centerPoint.getY(), 2)/Math.pow(dy, 2))) <= 1;
     }
 
     @Override
     public void moveFigure(double diffX, double diffY) {
         centerPoint.move(diffX, diffY);
-
     }
 }
