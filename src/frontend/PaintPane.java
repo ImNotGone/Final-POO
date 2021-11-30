@@ -6,13 +6,11 @@ import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Slider;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+
 
 public class PaintPane extends BorderPane {
 
@@ -38,6 +36,12 @@ public class PaintPane extends BorderPane {
 
 	// Sliders
 	Slider lineWidthSlider = new Slider(1, 50, 25);
+
+	// Line Label
+	Label lineWidthLabel = new Label("Borde");
+
+	// Fill Label
+	Label fillLabel = new Label("Relleno");
 
 	// ColorPicker
 	ColorPicker lineColorPicker = new ColorPicker(Color.BLACK);
@@ -66,16 +70,21 @@ public class PaintPane extends BorderPane {
 
 		lineWidthSlider.setShowTickMarks(true);
 		lineWidthSlider.setBlockIncrement(1f);
-
+		lineWidthSlider.setShowTickLabels(true);
 		
 		VBox buttonsBox = new VBox(10);
 		// Buttons
 		buttonsBox.getChildren().addAll(toolsArr);
-		// Slider
+
+		// Line options
+		buttonsBox.getChildren().add(lineWidthLabel);
 		buttonsBox.getChildren().add(lineWidthSlider);
-		// ColorPickers
 		buttonsBox.getChildren().add(lineColorPicker);
+
+		// Fill options
+		buttonsBox.getChildren().add(fillLabel);
 		buttonsBox.getChildren().add(fillColorPicker);
+
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
