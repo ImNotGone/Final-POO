@@ -6,6 +6,8 @@ import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Slider;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
@@ -31,6 +33,12 @@ public class PaintPane extends BorderPane {
 	ToggleButton ellipseButton = new ToggleButton("Elipse");
 	ToggleButton lineButton = new ToggleButton("Línea");
 
+	// Sliders
+	Slider lineThicknessSlider = new Slider(1, 50, 25);
+
+	// ColorPicker
+	final ColorPicker lineColorPicker = new ColorPicker(fillColor);
+	final ColorPicker fillColorPicker = new ColorPicker(lineColor);
 	// Dibujar una figura
 	Point startPoint;
 
@@ -50,12 +58,26 @@ public class PaintPane extends BorderPane {
 			tool.setToggleGroup(tools);
 			tool.setCursor(Cursor.HAND);
 		}
+
+		lineThicknessSlider.setShowTickMarks(true);
+		lineThicknessSlider.setBlockIncrement(1f);
+
 		VBox buttonsBox = new VBox(10);
+		// Buttons
 		buttonsBox.getChildren().addAll(toolsArr);
+		// Slider
+		buttonsBox.getChildren().add(lineThicknessSlider);
+		// ColorPickers
+		buttonsBox.getChildren().add(lineColorPicker);
+		buttonsBox.getChildren().add(fillColorPicker);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
 		gc.setLineWidth(1);
+
+		lineColorPicker.setOnAction(event -> lineColor = lineColorPicker.getValue());
+		fillColorPicker.setOnAction(event -> fillColor = fillColorPicker.getValue());
+
 		canvas.setOnMousePressed(event -> {
 			startPoint = new Point(event.getX(), event.getY());
 		});
@@ -74,7 +96,7 @@ public class PaintPane extends BorderPane {
 				double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
 				newFigure = new Circle(startPoint, circleRadius);
 			} else if(squareButton.isSelected()) {
-				newFigure = new Square(startPoint, startPoint.getX() - endPoint.getX());
+				newFigure = new Square(startPoint, Math.abs(startPoint.getX() - endPoint.getX()));
 			} else if(ellipseButton.isSelected()) {
 				double dx = Math.abs(startPoint.getX() - endPoint.getX());
 				double dy = Math.abs(startPoint.getY() - endPoint.getY());
@@ -133,7 +155,9 @@ public class PaintPane extends BorderPane {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				double diffX = (eventPoint.getX() - startPoint.getX()) / 100;
 				double diffY = (eventPoint.getY() - startPoint.getY()) / 100;
-				selectedFigure.moveFigure(diffX, diffY);
+				if(selectedFigure != null) {
+					selectedFigure.moveFigure(diffX, diffY);
+				}
 				redrawCanvas();
 			}
 		});
