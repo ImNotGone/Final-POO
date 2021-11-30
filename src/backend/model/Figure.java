@@ -9,10 +9,11 @@ public abstract class Figure {
 
     public abstract boolean contains(Point point);
     public abstract void moveFigure(double diffX, double diffY);
+
     public void setFigureProperties(double lineThickness, Color lineColor, Color backgroundColor) {
-        this.lineThickness = lineThickness;
-        this.lineColor = lineColor;
-        this.backgroundColor = backgroundColor;
+        setLineThickness(lineThickness);
+        setLineColor(lineColor);
+        setBackgroundColor(backgroundColor);
     }
 
     public Color getLineColor() {
@@ -25,5 +26,17 @@ public abstract class Figure {
 
     public double getLineThickness() {
         return lineThickness;
+    }
+
+    public void setLineThickness(double lineThickness){
+        this.lineThickness = lineThickness;
+    }
+
+    public void setLineColor(Color lineColor){
+        this.lineColor = lineColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor){
+        this.backgroundColor = backgroundColor;
     }
 }
