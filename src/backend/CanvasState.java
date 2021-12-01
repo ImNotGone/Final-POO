@@ -16,7 +16,6 @@ public class CanvasState extends ArrayList<Figure>{
         return this.add(figure);
     }
 
-
     public List<Figure> figures() {
         return new ArrayList<>(this);
     }
