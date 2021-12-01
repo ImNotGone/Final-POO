@@ -13,8 +13,4 @@ public class Circle extends Ellipse {
         return String.format("Círculo [Centro: %s, Radio: %.2f]", centerPoint, dx/2);
     }
 
-    public double getRadius() {
-        return dx/2;
-    }
-
 }

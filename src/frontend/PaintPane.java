@@ -177,16 +177,11 @@ public class PaintPane extends BorderPane {
 					canvasState.addFigure(figureButton.getFigure(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, endPoint));
 				}
 			}
-
-
 			startPoint = null;
 			redrawCanvas();
 		});
 
 		canvas.setOnMouseMoved(event -> {
-			if(startPoint == null) {
-				return ;
-			}
 			if (!selectedFigures.isEmpty())
 				return;;
 			Point eventPoint = new Point(event.getX(), event.getY());
@@ -206,9 +201,6 @@ public class PaintPane extends BorderPane {
 		});
 
 		canvas.setOnMouseClicked(event -> {
-			if(startPoint == null) {
-				return ;
-			}
 			if(selectionButton.isSelected() && event.isStillSincePress()) {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
@@ -229,6 +221,8 @@ public class PaintPane extends BorderPane {
 			}
 		});
 		canvas.setOnMouseDragged(event -> {
+			// si el usuario hace click derecho afuera mientras mantiene el click izquierdo
+			// cuando vuelve a la pantalla se rompe
 			if(startPoint == null) {
 				return ;
 			}
