@@ -20,4 +20,7 @@ public class StatusPane extends BorderPane {
 		statusLabel.setText(text);
 	}
 
+	public String getStatus() {
+		return statusLabel.getText();
+	}
 }
