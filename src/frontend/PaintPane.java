@@ -141,6 +141,7 @@ public class PaintPane extends BorderPane {
 				return ;
 			}
 
+			// Si se movio el mouse y hay figuras seleccionadas, me fijo caigo so
 			if (!selectedFigures.isEmpty() && !event.isStillSincePress()) {
 				boolean found = false;
 				for(Figure selectedFigure : selectedFigures) {
@@ -149,7 +150,6 @@ public class PaintPane extends BorderPane {
 				}
 				if(!found)
 					selectedFigures = new ArrayList<>();
-				redrawCanvas();
 			} else if((endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) && !lineButton.isSelected()) {
 				return;
 			} else if (selectionButton.isSelected() && selectedFigures.isEmpty()) {
@@ -174,7 +174,13 @@ public class PaintPane extends BorderPane {
 			}
 			for (FigureToggleButton figureButton : figureToggleButtonArr) {
 				if(figureButton.isSelected()) {
-					canvasState.addFigure(figureButton.getFigure(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, endPoint));
+					Figure newFigure = figureButton.getFigure(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, endPoint);
+					canvasState.addFigure(newFigure);
+					// en vez de dibujar todas las figuras, dibujo la nueva arriba de todas
+					drawFigure(newFigure);
+					startPoint = null;
+					// para que no se dibuje todas las figuras denuevo
+					return;
 				}
 			}
 			startPoint = null;
@@ -244,29 +250,34 @@ public class PaintPane extends BorderPane {
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Figure figure : canvasState.figures()) {
-			if (selectedFigures.contains(figure)) {
-				gc.setStroke(Color.RED);
-			} else {
-				gc.setStroke(figure.getLineColor());
-			}
-			gc.setLineWidth(figure.getLineThickness());
-			gc.setFill(figure.getfillColor());
-			if (figure instanceof Rectangle) {
-				Rectangle rectangle = (Rectangle) figure;
-				gc.fillRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
-						Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-				gc.strokeRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
-						Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-			} else if (figure instanceof Ellipse) {
-				Ellipse ellipse = (Ellipse) figure;
-				double dx = ellipse.getDx();
-				double dy = ellipse.getDy();
-				gc.fillOval(ellipse.getCenterPoint().getX() - (dx/2), ellipse.getCenterPoint().getY() - (dy/2), dx, dy);
-				gc.strokeOval(ellipse.getCenterPoint().getX() - (dx/2), ellipse.getCenterPoint().getY() - (dy/2), dx, dy);
-			} else if (figure instanceof Line) {
-				Line line = (Line) figure;
-				gc.strokeLine(line.getStart().getX(), line.getStart().getY(), line.getEnd().getX(), line.getEnd().getY());
-			}
+			drawFigure(figure);
+		}
+	}
+
+	// horrible el code
+	void drawFigure(Figure figure) {
+		if (selectedFigures.contains(figure)) {
+			gc.setStroke(Color.RED);
+		} else {
+			gc.setStroke(figure.getLineColor());
+		}
+		gc.setLineWidth(figure.getLineThickness());
+		gc.setFill(figure.getfillColor());
+		if (figure instanceof Rectangle) {
+			Rectangle rectangle = (Rectangle) figure;
+			gc.fillRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
+					Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
+			gc.strokeRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
+					Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
+		} else if (figure instanceof Ellipse) {
+			Ellipse ellipse = (Ellipse) figure;
+			double dx = ellipse.getDx();
+			double dy = ellipse.getDy();
+			gc.fillOval(ellipse.getCenterPoint().getX() - (dx/2), ellipse.getCenterPoint().getY() - (dy/2), dx, dy);
+			gc.strokeOval(ellipse.getCenterPoint().getX() - (dx/2), ellipse.getCenterPoint().getY() - (dy/2), dx, dy);
+		} else if (figure instanceof Line) {
+			Line line = (Line) figure;
+			gc.strokeLine(line.getStart().getX(), line.getStart().getY(), line.getEnd().getX(), line.getEnd().getY());
 		}
 	}
 
