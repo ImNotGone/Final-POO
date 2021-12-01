@@ -104,9 +104,7 @@ public class PaintPane extends BorderPane {
 		deleteButton.setOnAction(event -> {canvasState.removeAll(selectedFigures); redrawCanvas(); selectedFigures = new ArrayList<>();});
 		fowardButton.setOnAction(event -> {canvasState.removeAll(selectedFigures); canvasState.addAll(selectedFigures); selectedFigures = new ArrayList<>(); redrawCanvas();});
 		backButton.setOnAction(event -> {canvasState.removeAll(selectedFigures); canvasState.addAll(0, selectedFigures) ;selectedFigures = new ArrayList<>(); redrawCanvas();});
-		canvas.setOnMousePressed(event -> {
-			startPoint = new Point(event.getX(), event.getY());
-		});
+		canvas.setOnMousePressed(event -> startPoint = new Point(event.getX(), event.getY()));
 		lineWidthSlider.setOnMouseDragged((event) -> {
 			for(Figure figure : selectedFigures) {
 				figure.setLineWidth(lineWidthSlider.getValue());
@@ -133,15 +131,19 @@ public class PaintPane extends BorderPane {
 			if(startPoint == null) {
 				return ;
 			}
-			if((endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) && !lineButton.isSelected()) {
-				return;
-			}
-			for (FigureToggleButton figureButton : figureToggleButtonArr) {
-				if(figureButton.isSelected()) {
-					canvasState.addFigure(figureButton.getFigure(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, endPoint));
+
+			if (!selectedFigures.isEmpty() && !event.isStillSincePress()) {
+				boolean found = false;
+				for(Figure selectedFigure : selectedFigures) {
+					if (figureBelongs(selectedFigure, endPoint))
+						found = true;
 				}
-			}
-			if (selectionButton.isSelected()) {
+				if(!found)
+					selectedFigures = new ArrayList<>();
+				redrawCanvas();
+			} else if((endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) && !lineButton.isSelected()) {
+				return;
+			} else if (selectionButton.isSelected() && selectedFigures.isEmpty()) {
 				Figure selectionRectangle = new Rectangle(4, Color.RED, Color.TRANSPARENT, startPoint, endPoint);
 				boolean found = false;
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
@@ -161,6 +163,13 @@ public class PaintPane extends BorderPane {
 					statusPane.updateStatus("Ninguna figura encontrada");
 				}
 			}
+			for (FigureToggleButton figureButton : figureToggleButtonArr) {
+				if(figureButton.isSelected()) {
+					canvasState.addFigure(figureButton.getFigure(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, endPoint));
+				}
+			}
+
+
 			startPoint = null;
 			redrawCanvas();
 		});
@@ -193,7 +202,7 @@ public class PaintPane extends BorderPane {
 				for (Figure figure : aux) {
 					if(figureBelongs(figure, eventPoint)) {
 						selectedFigures.add(figure);
-						label.append(figure.toString());
+						label.append(figure);
 						statusPane.updateStatus(label.toString());
 						redrawCanvas();
 						return;

@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 
 public class Rectangle extends Figure {
 
-    private final Point topLeft, bottomRight;
+    protected final Point topLeft, bottomRight;
 
     public Rectangle(double lineWidth, Color lineColor, Color fillColor, Point topLeft, Point bottomRight) {
         super(lineWidth, lineColor, fillColor);
