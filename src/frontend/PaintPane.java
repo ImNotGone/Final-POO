@@ -16,11 +16,20 @@ import java.util.*;
 
 public class PaintPane extends BorderPane {
 
+	// UI Size
+	final int WIDTH = 800;
+	final int HEIGHT = 600;
+
+	// Slider defaults
+	final int MIN_LINE_WIDTH = 1;
+	final int MAX_LINE_WIDTH = 50;
+	final int DEFAULT_LINE_WIDTH = 5;
+
 	// BackEnd
 	CanvasState canvasState;
 
 	// Canvas y relacionados
-	Canvas canvas = new Canvas(800, 600);
+	Canvas canvas = new Canvas(WIDTH, HEIGHT);
 	GraphicsContext gc = canvas.getGraphicsContext2D();
 
 	// Botones Barra Izquierda
@@ -41,7 +50,7 @@ public class PaintPane extends BorderPane {
 	ToggleButton fowardButton = new ToggleButton("Al frente");
 
 	// Sliders
-	Slider lineWidthSlider = new Slider(1, 50, 25);
+	Slider lineWidthSlider = new Slider(MIN_LINE_WIDTH, MAX_LINE_WIDTH, DEFAULT_LINE_WIDTH);
 
 	// Line Label
 	Label lineWidthLabel = new Label("Borde");
@@ -144,7 +153,7 @@ public class PaintPane extends BorderPane {
 			} else if((endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) && !lineButton.isSelected()) {
 				return;
 			} else if (selectionButton.isSelected() && selectedFigures.isEmpty()) {
-				Figure selectionRectangle = new Rectangle(4, Color.RED, Color.TRANSPARENT, startPoint, endPoint);
+				Figure selectionRectangle = new Rectangle(DEFAULT_LINE_WIDTH, Color.RED, Color.TRANSPARENT, startPoint, endPoint);
 				boolean found = false;
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
 				for (Figure figure : canvasState.figures()) {
@@ -175,6 +184,9 @@ public class PaintPane extends BorderPane {
 		});
 
 		canvas.setOnMouseMoved(event -> {
+			if(startPoint == null) {
+				return ;
+			}
 			if (!selectedFigures.isEmpty())
 				return;;
 			Point eventPoint = new Point(event.getX(), event.getY());
@@ -194,6 +206,9 @@ public class PaintPane extends BorderPane {
 		});
 
 		canvas.setOnMouseClicked(event -> {
+			if(startPoint == null) {
+				return ;
+			}
 			if(selectionButton.isSelected() && event.isStillSincePress()) {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
@@ -214,6 +229,9 @@ public class PaintPane extends BorderPane {
 			}
 		});
 		canvas.setOnMouseDragged(event -> {
+			if(startPoint == null) {
+				return ;
+			}
 			if(selectionButton.isSelected()) {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				double diffX = (eventPoint.getX() - startPoint.getX()) / 100;

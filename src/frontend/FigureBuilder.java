@@ -7,5 +7,5 @@ import javafx.scene.paint.Color;
 
 @FunctionalInterface
 public interface FigureBuilder {
-    public Figure build(double lineWidth, Color lineColor, Color fillColor, Point startPoint, Point endPoint);
+    Figure build(double lineWidth, Color lineColor, Color fillColor, Point startPoint, Point endPoint);
 }
