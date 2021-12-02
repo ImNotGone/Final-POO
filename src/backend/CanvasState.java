@@ -2,10 +2,9 @@ package backend;
 
 import backend.model.Figure;
 import backend.model.Point;
-import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
 
 public class CanvasState {
@@ -47,10 +46,10 @@ public class CanvasState {
     }
 
     public Figure getFigureOnPoint(Point eventPoint) {
-        List<Figure> reversedFigures = new ArrayList<>(figures);
-        Collections.reverse(reversedFigures);
-        //todo mejorar esto de aca arriba xd
-        for(Figure figure : reversedFigures) {
+        Iterator<Figure> reversedFigures = reverseFigureIterator();
+        Figure figure;
+        while (reversedFigures.hasNext()) {
+            figure = reversedFigures.next();
             if(figure.contains(eventPoint))
                 return figure;
         }
@@ -68,18 +67,24 @@ public class CanvasState {
         return found;
     }
 
-    public boolean selectFigure(Point selectionPoint) {
-        List<Figure> reversedFigures = new ArrayList<>(figures);
-        Collections.reverse(reversedFigures);
-        //todo mejorar esto de aca arriba xd
-        for (Figure figure : reversedFigures) {
+    public boolean toggleSelectionFigure(Point selectionPoint) {
+
+        Iterator<Figure> reversedFigures = reverseFigureIterator();
+        Figure figure;
+        while (reversedFigures.hasNext()) {
+            figure = reversedFigures.next();
             if(figureBelongs(figure, selectionPoint)) {
-                selectedFigures.add(figure);
+                if (selectedFigures.contains(figure)) {
+                    selectedFigures.remove(figure);
+                } else {
+                    selectedFigures.add(figure);
+                }
                 return true;
             }
         }
         return false;
     }
+
 
     public void moveSelectedForward() {
         figures.removeAll(selectedFigures);
@@ -120,5 +125,24 @@ public class CanvasState {
 
     private boolean figureContains(Figure figure, Figure figureContainer) {
         return figure.isContained(figureContainer);
+    }
+
+    private Iterator<Figure> reverseFigureIterator() {
+        return new Iterator<>() {
+            private int index = figures.size() - 1;
+            @Override
+            public boolean hasNext() {
+                return index >= 0;
+            }
+
+            @Override
+            public Figure next() {
+                if(!hasNext())
+                    throw new NoSuchElementException("No existe el elemento");
+                Figure out = figures.get(index);
+                index--;
+                return out;
+            }
+        };
     }
 }

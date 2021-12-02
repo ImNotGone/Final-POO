@@ -1,6 +1,7 @@
 package backend.model;
 
-import javafx.scene.paint.Color;
+
+import java.awt.*;
 
 public class Circle extends Ellipse {
 

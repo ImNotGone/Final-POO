@@ -1,6 +1,7 @@
 package backend.model;
 
-import javafx.scene.paint.Color;
+
+import java.awt.*;
 
 public class Square extends Rectangle{
     public Square(double lineWidth, Color lineColor, Color fillColor, Point topLeft, double side) {

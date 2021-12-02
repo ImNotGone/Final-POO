@@ -3,7 +3,8 @@ package frontend;
 import backend.model.Figure;
 import backend.model.Point;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.paint.Color;
+
+import java.awt.*;
 
 
 public class FigureToggleButton extends ToggleButton {

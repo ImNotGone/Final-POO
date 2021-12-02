@@ -5,7 +5,6 @@ import javafx.scene.control.*;
 import java.util.Optional;
 
 public class AppMenuBar extends MenuBar {
-
     public AppMenuBar() {
         Menu file = new Menu("Archivo");
         MenuItem exitMenuItem = new MenuItem("Salir");

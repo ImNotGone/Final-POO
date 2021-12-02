@@ -2,7 +2,8 @@ package frontend;
 
 import backend.model.Figure;
 import backend.model.Point;
-import javafx.scene.paint.Color;
+
+import java.awt.*;
 
 
 @FunctionalInterface
