@@ -46,7 +46,7 @@ public class Ellipse extends Figure {
     }
 
     @Override
-    public void moveFigure(double diffX, double diffY) {
+    public void move(double diffX, double diffY) {
         centerPoint.move(diffX, diffY);
     }
 }

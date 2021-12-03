@@ -28,7 +28,7 @@ public class Line extends Figure {
     }
 
     @Override
-    public void moveFigure(double diffX, double diffY) {
+    public void move(double diffX, double diffY) {
         start.move(diffX, diffY);
         end.move(diffX, diffY);
     }

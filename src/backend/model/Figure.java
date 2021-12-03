@@ -3,14 +3,13 @@ package backend.model;
 
 import java.awt.*;
 
-public abstract class Figure {
+public abstract class Figure implements Movable{
     private double lineWidth;
     private Color lineColor;
     private Color fillColor;
 
     public abstract boolean contains(Point point);
     public abstract boolean isContained(Figure figure);
-    public abstract void moveFigure(double diffX, double diffY);
 
     public Figure(double lineWidth, Color lineColor, Color fillColor){
         setFigureProperties(lineWidth, lineColor, fillColor);
@@ -26,7 +25,7 @@ public abstract class Figure {
         return lineColor;
     }
 
-    public Color getfillColor() {
+    public Color getFillColor() {
         return fillColor;
     }
 

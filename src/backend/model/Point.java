@@ -1,6 +1,6 @@
 package backend.model;
 
-public class Point {
+public class Point implements Movable{
 
     private double x, y;
 

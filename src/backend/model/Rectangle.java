@@ -38,7 +38,7 @@ public class Rectangle extends Figure {
     }
 
     @Override
-    public void moveFigure(double diffX, double diffY) {
+    public void move(double diffX, double diffY) {
         topLeft.move(diffX, diffY);
         bottomRight.move(diffX, diffY);
     }

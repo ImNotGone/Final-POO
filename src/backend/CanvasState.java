@@ -98,7 +98,7 @@ public class CanvasState {
 
     public void moveSelectedFigures(double diffX, double diffY) {
         for(Figure selectedFigure : selectedFigures)
-            selectedFigure.moveFigure(diffX, diffY);
+            selectedFigure.move(diffX, diffY);
     }
 
     public void setSelectedFigureLineWidth(double lineWidth) {

@@ -251,7 +251,7 @@ public class PaintPane extends BorderPane {
 			gc.setStroke(toFxColor(figure.getLineColor()));
 		}
 		gc.setLineWidth(figure.getLineThickness());
-		gc.setFill(toFxColor(figure.getfillColor()));
+		gc.setFill(toFxColor(figure.getFillColor()));
 		if (figure instanceof Rectangle) {
 			Rectangle rectangle = (Rectangle) figure;
 			gc.fillRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
