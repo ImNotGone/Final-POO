@@ -4,6 +4,7 @@ package backend.model;
 import java.awt.*;
 
 public class Ellipse extends Figure {
+
     protected final Point centerPoint;
     protected final double dx, dy;
 

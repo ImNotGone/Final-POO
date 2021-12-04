@@ -11,5 +11,4 @@ public class MainFrame extends VBox {
         getChildren().add(new PaintPane(canvasState, statusPane));
         getChildren().add(statusPane);
     }
-
 }

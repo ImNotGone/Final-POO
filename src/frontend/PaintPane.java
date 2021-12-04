@@ -2,214 +2,169 @@ package frontend;
 
 import backend.CanvasState;
 import backend.model.*;
-import javafx.geometry.Insets;
-import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-
 
 
 public class PaintPane extends BorderPane {
 
-	// UI Size
-	private static final int WIDTH = 800;
-	private static final int HEIGHT = 600;
+	/* ========== Declaracion de macros ========== */
 
-	// Slider defaults
-	private static final int MIN_LINE_WIDTH = 1;
-	private static final int MAX_LINE_WIDTH = 50;
-	private static final int DEFAULT_LINE_WIDTH = 5;
+	private static final int CANVAS_WIDTH = 800;
+	private static final int CANVAS_HEIGHT = 600;
+	private static final int MOVEMENT_SPEED = 100; //Mientras mas chico el valor, mas rapido se mueven
+	private static final double MAX_COLOR_VALUE = 255.0; //Para convertir el color en escala de enteros [0-255] a escala de reales [0-1]
+	private static final double SELECTION_RECTANGLE_LINE_WIDTH = 1.0;
+	private static final java.awt.Color SELECTION_RECTANGLE_LINE_COLOR = java.awt.Color.RED;
+	private static final java.awt.Color SELECTION_RECTANGLE_FILL_COLOR = new java.awt.Color(0f,0f,0f,0f);
+	private static final Color FIGURE_SELECTION_LINE_COLOR = Color.RED;
+	private static final String SELECTION_RECTANGLE_STRING = "Seleccionando figuras";
+	private static final String SELECTION_STRING = "Estan seleccionadas: ";
+	private static final String DESELECTION_STRING = "Figuras deseleccionadas";
+	private static final String NONE_FOUND_STRING = "Ninguna figura encontrada";
+	private static final String CANT_MOVE_FORWARD_STRING = "Debe seleccionar las figuras que desea mover al frente";
+	private static final String CANT_MOVE_BACK_STRING = "Debe seleccionar las figuras que desea mover al fondo";
+	private static final String CANT_DELETE_STRING = "Debe seleccionar las figuras que desea borrar";
+	private static final String ON_DELETION_STRING = "Se borraron las figuras seleccionadas";
+	private static final String MUST_SELECT_BUTTON_STRING = "Debe seleccionar algun boton";
+
+	/* ========== Variables de instancia ========== */
 
 	// BackEnd
 	private final CanvasState canvasState;
 
-	// Canvas y relacionados
-	private final Canvas canvas = new Canvas(WIDTH, HEIGHT);
+	// StatusPane
+	private final StatusPane statusPane;
+
+	// Canvas y GraphicsContext
+	private final Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 	private final GraphicsContext gc = canvas.getGraphicsContext2D();
 
-	// Botones Barra Izquierda
-	private final ToggleButton selectionButton = new ToggleButton("Seleccionar");
-	private final FigureToggleButton circleButton = new FigureToggleButton("Círculo", (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Circle(lineWidth, lineColor, fillColor, startPoint, Math.abs(endPoint.getX() - startPoint.getX())));
-	private final FigureToggleButton squareButton = new FigureToggleButton("Cuadrado", (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Square(lineWidth, lineColor, fillColor, startPoint, Math.abs(startPoint.getX() - endPoint.getX())));
-	private final FigureToggleButton rectangleButton = new FigureToggleButton("Rectángulo", (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Rectangle(lineWidth, lineColor, fillColor, startPoint, endPoint));
-	private final FigureToggleButton ellipseButton = new FigureToggleButton("Elipse", (lineWidth, lineColor, fillColor, startPoint, endPoint) ->
-	{double dx = Math.abs(startPoint.getX() - endPoint.getX());
-		double dy = Math.abs(startPoint.getY() - endPoint.getY());
-		double x = (startPoint.getX()+endPoint.getX())/2;
-		double y = (startPoint.getY()+endPoint.getY())/2;
-		return new Ellipse(lineWidth, lineColor, fillColor, new Point(x, y),dx,dy);});
-	private final FigureToggleButton lineButton = new FigureToggleButton("Línea", (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Line(lineWidth, lineColor, fillColor, startPoint, endPoint));
-
-	private final ToggleButton deleteButton = new ToggleButton("Borrar");
-	private final ToggleButton backButton = new ToggleButton("Al fondo");
-	private final ToggleButton fowardButton = new ToggleButton("Al frente");
-
-	// Sliders
-	private final Slider lineWidthSlider = new Slider(MIN_LINE_WIDTH, MAX_LINE_WIDTH, DEFAULT_LINE_WIDTH);
-
-	// Line Label
-	private final Label lineWidthLabel = new Label("Borde");
-
-	// Fill Label
-	private final Label fillLabel = new Label("Relleno");
-
-	// ColorPicker
-	private final ColorPicker lineColorPicker = new ColorPicker(Color.BLACK);
-	private final ColorPicker fillColorPicker = new ColorPicker(Color.YELLOW);
+	// Barra de botones
+	private final ToolBar toolBar = new ToolBar();
 
 	// Dibujar una figura
 	private Point startPoint;
+	private Figure currentFigure;
 
-	// StatusBar
-	private StatusPane statusPane;
 
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
+
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
-		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, lineButton, deleteButton, backButton, fowardButton};
-		FigureToggleButton[] figureToggleButtonArr = {rectangleButton, circleButton, squareButton, ellipseButton, lineButton};
-		ToggleGroup tools = new ToggleGroup();
-		for (ToggleButton tool : toolsArr) {
-			tool.setMinWidth(90);
-			tool.setToggleGroup(tools);
-			tool.setCursor(Cursor.HAND);
-		}
 
-		lineWidthSlider.setShowTickMarks(true);
-		lineWidthSlider.setBlockIncrement(1f);
-		lineWidthSlider.setShowTickLabels(true);
-		
-		VBox buttonsBox = new VBox(10);
-		// Buttons
-		buttonsBox.getChildren().addAll(toolsArr);
+		setLeft(toolBar);
+		setRight(canvas);
 
-		// Line options
-		buttonsBox.getChildren().add(lineWidthLabel);
-		buttonsBox.getChildren().add(lineWidthSlider);
-		buttonsBox.getChildren().add(lineColorPicker);
+		/* ========== Acciones para los botones de la toolBar ========== */
+		// Decidimos que al apretar los botones de figuras se deseleccionen todas las figuras
+		toolBar.setFigureButtonAction(event -> {canvasState.resetSelectedFigures(); redrawCanvas();});
 
-		// Fill options
-		buttonsBox.getChildren().add(fillLabel);
-		buttonsBox.getChildren().add(fillColorPicker);
+		// Al tocar el boton de borrar, mover al fondo o mover al frente
+		// si no hay figuras seleccionadas no se realiza la accion y se muestra un mensaje en la barra de estado.
+		// Luego de tocar el boton, se selecciona automaticamente el boton de seleccion para comodidad del usuario
 
-		buttonsBox.setPadding(new Insets(5));
-		buttonsBox.setStyle("-fx-background-color: #999");
-		buttonsBox.setPrefWidth(100);
-
-		selectionButton.setOnAction(event -> {canvasState.resetSelectedFigures(); redrawCanvas();});
-		squareButton.setOnAction(event -> {canvasState.resetSelectedFigures(); redrawCanvas();});
-		rectangleButton.setOnAction(event -> {canvasState.resetSelectedFigures(); redrawCanvas();});
-		circleButton.setOnAction(event -> {canvasState.resetSelectedFigures(); redrawCanvas();});
-		ellipseButton.setOnAction(event -> {canvasState.resetSelectedFigures(); redrawCanvas();});
-		lineButton.setOnAction(event -> {canvasState.resetSelectedFigures(); redrawCanvas();});
-		deleteButton.setOnAction(event -> {canvasState.deleteSelected(); redrawCanvas(); changeToSelect(deleteButton);});
-		fowardButton.setOnAction(event -> {canvasState.moveSelectedForward(); redrawCanvas(); changeToSelect(fowardButton);});
-		backButton.setOnAction(event -> {canvasState.moveSelectedBack(); redrawCanvas(); changeToSelect(backButton);});
-		canvas.setOnMousePressed(event -> startPoint = new Point(event.getX(), event.getY()));
-		lineWidthSlider.setOnMouseDragged((event) -> {
-			canvasState.setSelectedFigureLineWidth(lineWidthSlider.getValue());
-			redrawCanvas();
-		});
-		lineColorPicker.setOnAction((event) -> {
-			canvasState.setSelectedFiguresLineColor(toJavaColor(lineColorPicker.getValue()));
-			redrawCanvas();
-		});
-		fillColorPicker.setOnAction((event) -> {
-			canvasState.setSelectedFiguresFillColor(toJavaColor(fillColorPicker.getValue()));
-			redrawCanvas();
-		});
-
-		canvas.setOnMouseReleased(event -> {
-			Point endPoint = new Point(event.getX(), event.getY());
-			if (startPoint == null || event.isStillSincePress()) {
-				return;
-			}
-
-			// Si se movio el mouse y hay figuras seleccionadas, me fijo caigo so
-			/*
-			if (!canvasState.isSelectedFiguresEmpty()) {
-				if (!canvasState.checkPointIsInAnySelectedFigure(endPoint))
-					canvasState.resetSelectedFigures();
-			} else if (!isEndPointValid(endPoint) && !lineButton.isSelected()) {
-				return;
-			} else if (selectionButton.isSelected() && canvasState.isSelectedFiguresEmpty()) {
-				Figure selectionRectangle = new Rectangle(DEFAULT_LINE_WIDTH, Color.RED, Color.TRANSPARENT, startPoint, endPoint);
-				selectFigures(selectionRectangle);
-			} else {
-				for (FigureToggleButton figureButton : figureToggleButtonArr) {
-					if (figureButton.isSelected()) {
-						Figure newFigure = figureButton.getFigure(lineWidthSlider.getValue(), lineColorPicker.getValue(), fillColorPicker.getValue(), startPoint, endPoint);
-						canvasState.addFigure(newFigure);
-						// en vez de dibujar todas las figuras, dibujo la nueva arriba de todas
-						drawFigure(newFigure);
-						startPoint = null;
-						// para que no se dibuje todas las figuras denuevo
-						return;
-					}
-				}
-			}
-			startPoint = null;
-			redrawCanvas();
-			*/
-			if (!canvasState.isSelectedFiguresEmpty()) {
-				if (!canvasState.checkPointIsInAnySelectedFigure(endPoint))
-					canvasState.resetSelectedFigures();
-				startPoint = null;
+		toolBar.setForwardAction(event -> {
+			if(isSelectedActionPossible(CANT_MOVE_FORWARD_STRING)) {
+				canvasState.moveSelectedForward();
 				redrawCanvas();
-				return;
 			}
-			if (!isEndPointValid(endPoint) && !lineButton.isSelected())
-				return;
-
-			if (selectionButton.isSelected() && canvasState.isSelectedFiguresEmpty()) {
-				Figure selectionRectangle = new Rectangle(DEFAULT_LINE_WIDTH, java.awt.Color.RED, java.awt.Color.WHITE, startPoint, endPoint);
-				if (!canvasState.selectFigures(selectionRectangle))
-					canvasState.resetSelectedFigures();
-
-				updateSelectedFiguresLabel(false);
-				startPoint = null;
+			toolBar.changeToSelect();
+		});
+		toolBar.setBackAction(event -> {
+			if(isSelectedActionPossible(CANT_MOVE_BACK_STRING)) {
+				canvasState.moveSelectedBack();
 				redrawCanvas();
-				return;
 			}
-			if(selectionButton.isSelected()) {return;}
-			for (FigureToggleButton figureButton : figureToggleButtonArr) {
-				if (figureButton.isSelected()) {
-					Figure newFigure = figureButton.getFigure(lineWidthSlider.getValue(), toJavaColor(lineColorPicker.getValue()), toJavaColor(fillColorPicker.getValue()), startPoint, endPoint);
-					canvasState.addFigure(newFigure);
-					// en vez de dibujar todas las figuras, dibujo la nueva arriba de todas
-					drawFigure(newFigure);
-					startPoint = null;
-					// para que no se dibuje todas las figuras denuevo
+			toolBar.changeToSelect();
+		});
+		toolBar.setDeleteAction(event -> {
+			if(isSelectedActionPossible(CANT_DELETE_STRING)) {
+				canvasState.deleteSelected();
+				redrawCanvas();
+				statusPane.updateStatus(ON_DELETION_STRING);
+			}
+			toolBar.changeToSelect();
+		});
+		toolBar.setLineWidthSliderAction(event -> {canvasState.setSelectedFigureLineWidth(toolBar.getLineWidth()); redrawCanvas();});
+		toolBar.setLineColorPickerAction(event -> {canvasState.setSelectedFiguresLineColor(toJavaColor(toolBar.getLineColor())); redrawCanvas();});
+		toolBar.setFillColorPickerAction(event -> {canvasState.setSelectedFiguresFillColor(toJavaColor(toolBar.getFillColor())); redrawCanvas();});
+
+		/* ========== Mouse events en el Canvas ========== */
+
+		canvas.setOnMousePressed(event -> {
+			// Si hay algun boton presionado actualizamos el punto de inicio (startPoint) con el punto actual.
+			// Si no hay ninguno presionado se muestra un mensaje en la barra de estado
+			for (ToggleButton button : toolBar.getButtons()) {
+				if (button.isSelected()) {
+					startPoint = new Point(event.getX(), event.getY());
 					return;
 				}
 			}
+			statusPane.updateStatus(MUST_SELECT_BUTTON_STRING);
 		});
 
-		canvas.setOnMouseMoved(event -> {
-			if (!canvasState.isSelectedFiguresEmpty())
+		canvas.setOnMouseReleased(event -> {
+			// Si no existe un punto de inicio no hacemos nada para evitar un NullPointerException
+			// Si el mouse se solto en el mismo lugar que cuando se apreto no hacemos nada para no interferir con el "click"
+			if (startPoint == null || event.isStillSincePress()) {
+				resetStartPoint();
 				return;
-			Point eventPoint = new Point(event.getX(), event.getY());
-			Figure figureOnPoint = canvasState.getFigureOnPoint(eventPoint);
+			}
 
-			if(figureOnPoint != null) {
-				statusPane.updateStatus(figureOnPoint.toString());
-			} else {
-				statusPane.updateStatus(eventPoint.toString());
+			Point endPoint = new Point(event.getX(), event.getY());
+
+			// Una vez soltado el mouse reseteamos el punto de inicio
+			resetStartPoint();
+
+			// Esto se hace para deseleccionar las figuras si al soltar el mouse luego de moverlas el mouse no esta dentro de alguna
+			if (!canvasState.isSelectedFiguresEmpty()) {
+				if (!canvasState.belongsToASelectedFigure(endPoint))
+					canvasState.resetSelectedFigures();
+				redrawCanvas();
+				statusPane.updateStatus(DESELECTION_STRING);
+				return;
+			}
+
+			// Antes de interactuar con la figura en creacion 'currentFigure' checkeamos que esta no sea null
+			if (currentFigure == null)
+				return;
+
+			// Una vez suelto el mouse, si esta seleccionado el boton de seleccion y no hay figuras seleccionadas
+			// 'currentFigure' es la figura de seleccion, entonces seleccionamos las figuras que se encuentren dentro de esta
+			if (toolBar.isSelectionButtonSelected() && canvasState.isSelectedFiguresEmpty()) {
+				if (!canvasState.selectFigures(currentFigure))
+					canvasState.resetSelectedFigures();
+
+				updateSelectedFiguresLabel(false);
+				redrawCanvas();
+				resetCurrentFigure();
+				return;
+			}
+
+			// Una vez suelto el mouse, la figura que creo el usuario se agrega al canvasState
+			// Si el boton de seleccion esta activo, 'currentFigure' es el rectangulo de seleccion, entonces no se agrega
+			if(!toolBar.isSelectionButtonSelected()) {
+				canvasState.addFigure(currentFigure);
+				resetCurrentFigure();
 			}
 		});
+
 
 		canvas.setOnMouseClicked(event -> {
 			// Si no esta apretado el boton de seleccion no hay nada que hacer
 			// Este evento no deberia interferir con el de soltar el mouse,
 			// entonces agregamos la condicion de que el mouse apriete y suelte en el mismo lugar
-			if(!(selectionButton.isSelected() && event.isStillSincePress()))
+			if(!(toolBar.isSelectionButtonSelected() && event.isStillSincePress()))
 				return;
 
 			Point eventPoint = new Point(event.getX(), event.getY());
+
+			// Si se clickea en una figura, esta cambia su estado de seleccion
+			// Si no se clickea en ninguna figura se deseleccionan todas las figuras
 			boolean found = canvasState.toggleSelectionFigure(eventPoint);
 			if (!found) {
 				canvasState.resetSelectedFigures();
@@ -217,86 +172,157 @@ public class PaintPane extends BorderPane {
 			updateSelectedFiguresLabel(found);
 			redrawCanvas();
 		});
+
+		canvas.setOnMouseMoved(event -> {
+			// Si hay figuras seleccionadas el mensaje de estado (Status Label)
+			// no deberia actualizarse al mover el mouse (debe seguir mostrando las figuras seleccionadas)
+			if (!canvasState.isSelectedFiguresEmpty())
+				return;
+
+			// Si no hay figuras seleccionadas, busca una figura en el punto actual
+			// si la encuentra imprime que figura es y sus propiedades (Lo cambiamos para que imprima solo la superior)
+			// si no encuentra una figura imprime las coordenadas actuales del mouse
+			Point eventPoint = new Point(event.getX(), event.getY());
+			Figure figureOnPoint = canvasState.getFigureOnPoint(eventPoint);
+
+			statusPane.updateStatus( figureOnPoint == null ? eventPoint.toString() : figureOnPoint.toString());
+		});
+
 		canvas.setOnMouseDragged(event -> {
-			// si el usuario hace click derecho afuera mientras mantiene el click izquierdo
-			// cuando vuelve a la pantalla se rompe
-			if(startPoint == null) {
-				return ;
-			}
-			if(selectionButton.isSelected()) {
-				Point eventPoint = new Point(event.getX(), event.getY());
-				double diffX = (eventPoint.getX() - startPoint.getX()) / 100;
-				double diffY = (eventPoint.getY() - startPoint.getY()) / 100;
+			// Si no existe un punto de inicio no hacemos nada para evitar un NullPointerException
+			if (startPoint == null)
+				return;
+
+			Point eventPoint = new Point(event.getX(), event.getY());
+
+			// Si esta seleccionado el boton de seleccion y hay figuras seleccionadas, las muevo
+			if(toolBar.isSelectionButtonSelected() && !canvasState.isSelectedFiguresEmpty()) {
+				double diffX = (eventPoint.getX() - startPoint.getX()) / MOVEMENT_SPEED;
+				double diffY = (eventPoint.getY() - startPoint.getY()) / MOVEMENT_SPEED;
 				canvasState.moveSelectedFigures(diffX, diffY);
 				redrawCanvas();
+				return;
+			}
+
+			// Se cambio la funcionalidad de la creacion de figuras a la accion de 'drag' asi el usuario
+			// puede ver en tiempo real la figura que esta creando, al soltar el mouse se termina de crear la figura y se agrega al 'canvasState'
+
+			// Mientras se 'draguea' el mouse, actualizamos el mensaje de estado (Status Label) con el punto actual
+			// si el mouse se va afuera del canvas, no lo actualizamos
+			if(isOnCanvas(eventPoint))
+				statusPane.updateStatus(eventPoint.toString());
+
+			// Solo se permite crear figuras de esquina superior hacia esquina inferior, las lineas se pueden crear para cualquier direccion
+			if (!isEndPointValid(eventPoint) && !toolBar.isLineButtonSelected()) {
+				redrawCanvas();
+				resetCurrentFigure();
+				return;
+			}
+
+			// Si esta activo el boton de seleccion creamos el rectangulo de seleccion
+			// sino iteramos por los botones para ver que figura creamos
+			if (toolBar.isSelectionButtonSelected()) {
+				currentFigure = new Rectangle(SELECTION_RECTANGLE_LINE_WIDTH, SELECTION_RECTANGLE_LINE_COLOR, SELECTION_RECTANGLE_FILL_COLOR, startPoint, eventPoint);
+			} else {
+				for (FigureToggleButton figureButton : toolBar.getFigureButtons()) {
+					if (figureButton.isSelected()) {
+						currentFigure = figureButton.buildFigure(toolBar.getLineWidth(), toJavaColor(toolBar.getLineColor()), toJavaColor(toolBar.getFillColor()), startPoint, eventPoint);
+					}
+				}
+			}
+
+			// Dibujamos la figura actual y actualizamos el mensaje de estado (Status Label)
+			if(currentFigure != null) {
+				redrawCanvas();
+				drawFigure(currentFigure);
+				statusPane.updateStatus(toolBar.isSelectionButtonSelected() ? SELECTION_RECTANGLE_STRING : currentFigure.toString());
 			}
 		});
-		setLeft(buttonsBox);
-		setRight(canvas);
 	}
 
-	void redrawCanvas() {
-		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+	/* ========== Metodos auxiliares ========== */
+
+	// Reinicia el canvas y dibuja todas las figuras denuevo
+	private void redrawCanvas() {
+		gc.clearRect(0, 0, getWidth(), getHeight());
 		for(Figure figure : canvasState.figures()) {
 			drawFigure(figure);
 		}
 	}
 
-	// Cambiariamos el code pero mezcla el back y el front
-	// Mejor lo dejamos asi :/
-	void drawFigure(Figure figure) {
-		if (canvasState.selectedFigures().contains(figure)) {
-			gc.setStroke(Color.RED);
-		} else {
-			gc.setStroke(toFxColor(figure.getLineColor()));
-		}
-		gc.setLineWidth(figure.getLineThickness());
+	// Se encarga de dibujar la figura que recibe, si la misma esta seleccionada le pone un borde rojo para distinguirla
+	// No encontramos una manera de limpiar la parte del instanceof sin ensuciar el back
+	// Lamentablemente la tuvimos que dejar asi
+	private void drawFigure(Figure figure) {
+		gc.setStroke(canvasState.selectedFigures().contains(figure) ? FIGURE_SELECTION_LINE_COLOR : toFxColor(figure.getLineColor()));
+		gc.setLineWidth(figure.getLineWidth());
 		gc.setFill(toFxColor(figure.getFillColor()));
-		if (figure instanceof Rectangle) {
-			Rectangle rectangle = (Rectangle) figure;
+		if (figure instanceof Rectangle rectangle) {
 			gc.fillRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
 					Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
 			gc.strokeRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
 					Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-		} else if (figure instanceof Ellipse) {
-			Ellipse ellipse = (Ellipse) figure;
+		} else if (figure instanceof Ellipse ellipse) {
 			double dx = ellipse.getDx();
 			double dy = ellipse.getDy();
 			gc.fillOval(ellipse.getCenterPoint().getX() - (dx/2), ellipse.getCenterPoint().getY() - (dy/2), dx, dy);
 			gc.strokeOval(ellipse.getCenterPoint().getX() - (dx/2), ellipse.getCenterPoint().getY() - (dy/2), dx, dy);
-		} else if (figure instanceof Line) {
-			Line line = (Line) figure;
+		} else if (figure instanceof Line line) {
 			gc.strokeLine(line.getStart().getX(), line.getStart().getY(), line.getEnd().getX(), line.getEnd().getY());
 		}
 	}
 
-	boolean isEndPointValid(Point endPoint) {
-		return !(endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY());
-	}
-
-	void updateSelectedFiguresLabel(boolean found) {
+	// Actualiza el mensaje de estado (Status Label)
+	// Si hay figuras seleccionadas se muestra la descripcion de las mismas
+	// Si no hay figuras seleccionadas y 'found' es verdadero es porque se hizo click en la ultima figura seleccionada
+	// Si no hay figuras seleccionadas y 'found' es false es porque se hizo click afuera de las figuras y no se encontro ninguna
+	private void updateSelectedFiguresLabel(boolean found) {
 		if(canvasState.isSelectedFiguresEmpty()) {
-			statusPane.updateStatus(found ? "Ultima figura deseleccionada" :"Ninguna figura encontrada");
+			statusPane.updateStatus(found ? DESELECTION_STRING : NONE_FOUND_STRING);
 			return;
 		}
-		StringBuilder label = new StringBuilder("En seleccion: ");
+		StringBuilder label = new StringBuilder(SELECTION_STRING);
 		for (Figure selectedFigure : canvasState.selectedFigures()) {
 			label.append(selectedFigure.toString());
 		}
 		statusPane.updateStatus(label.toString());
 	}
 
-	java.awt.Color toJavaColor(Color fxColor) {
+	// Si no hay figuras seleccionadas, al tocarse el boton de borrar, mandar al frente o mandar al fondo
+	// se muestra 'errorMessage' en el mensaje de estado, devuelve si hay figuras seleccionadas
+	private boolean isSelectedActionPossible(String errorMessage) {
+		if(canvasState.isSelectedFiguresEmpty()) {
+			statusPane.updateStatus(errorMessage);
+			return false;
+		}
+		return true;
+	}
+
+	private void resetStartPoint() {
+		startPoint = null;
+	}
+
+	private void resetCurrentFigure() {
+		currentFigure = null;
+	}
+
+	// Verifica que el endpoint este abajo a la izq del start point
+	private boolean isEndPointValid(Point endPoint) {
+		return !(endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY());
+	}
+
+	// Verifica que un punto este dentro del canvas
+	private boolean isOnCanvas(Point eventPoint) {
+		return eventPoint.getX() >= 0 && eventPoint.getY() >= 0 && eventPoint.getX() <= CANVAS_WIDTH && eventPoint.getY() <= CANVAS_HEIGHT;
+	}
+
+	// Genera un color de javaFX a partir de un color de java.awt
+	private Color toFxColor(java.awt.Color javaColor) {
+		return new Color(javaColor.getRed() / MAX_COLOR_VALUE, javaColor.getGreen() / MAX_COLOR_VALUE, javaColor.getBlue() / MAX_COLOR_VALUE, javaColor.getAlpha() / MAX_COLOR_VALUE);
+	}
+
+	// Genera un color de java.awt a partir de un color de javaFX
+	private java.awt.Color toJavaColor(Color fxColor) {
 		return new java.awt.Color((float) fxColor.getRed(),(float) fxColor.getGreen(),(float) fxColor.getBlue(),(float) fxColor.getOpacity());
-	}
-
-	Color toFxColor(java.awt.Color javaColor) {
-		return new Color(javaColor.getRed() / 255.0, javaColor.getGreen() / 255.0, javaColor.getBlue() / 255.0, javaColor.getAlpha() / 255.0);
-	}
-
-	void changeToSelect(ToggleButton button) {
-		button.setSelected(false);
-		selectionButton.setSelected(true);
-		selectionButton.requestFocus();
 	}
 }

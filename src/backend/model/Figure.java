@@ -1,14 +1,17 @@
 package backend.model;
 
-
+// Usamos la clase Color que viene con el SDK de java
 import java.awt.*;
 
-public abstract class Figure implements Movable{
+public abstract class Figure implements Movable {
+
     private double lineWidth;
     private Color lineColor;
     private Color fillColor;
 
+    // Permite saber si un punto pertenece a una figura
     public abstract boolean contains(Point point);
+    // Permite saber si una figura esta contenida en la otra
     public abstract boolean isContained(Figure figure);
 
     public Figure(double lineWidth, Color lineColor, Color fillColor){
@@ -21,6 +24,7 @@ public abstract class Figure implements Movable{
         setFillColor(fillColor);
     }
 
+    // Getters y setters para las propiedades esteticas de las figuras
     public Color getLineColor() {
         return lineColor;
     }
@@ -29,7 +33,7 @@ public abstract class Figure implements Movable{
         return fillColor;
     }
 
-    public double getLineThickness() {
+    public double getLineWidth() {
         return lineWidth;
     }
 
@@ -44,7 +48,4 @@ public abstract class Figure implements Movable{
     public void setFillColor(Color fillColor){
         this.fillColor = fillColor;
     }
-
-
-    
 }

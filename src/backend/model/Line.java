@@ -4,6 +4,7 @@ package backend.model;
 import java.awt.*;
 
 public class Line extends Figure {
+
     private final Point start, end;
 
     public Line(double lineWidth, Color lineColor, Color fillColor, Point start, Point end) {
