@@ -11,7 +11,7 @@ public abstract class Figure implements Movable {
 
     // Permite saber si un punto pertenece a una figura
     public abstract boolean contains(Point point);
-    // Permite saber si una figura esta contenida en la otra
+    // Permite saber si una figura está contenida en la otra
     public abstract boolean isContained(Figure figure);
 
     public Figure(double lineWidth, Color lineColor, Color fillColor){
@@ -24,7 +24,7 @@ public abstract class Figure implements Movable {
         setFillColor(fillColor);
     }
 
-    // Getters y setters para las propiedades esteticas de las figuras
+    // Getters y setters para las propiedades estéticas de las figuras
     public Color getLineColor() {
         return lineColor;
     }

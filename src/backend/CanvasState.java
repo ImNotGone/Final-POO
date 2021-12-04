@@ -10,7 +10,7 @@ import java.util.List;
 public class CanvasState {
 
     // Colecciones de figuras necesarias
-    // La primer figura es la del fondo, la ultima es la del frente
+    // La primera figura es la del fondo, la última es la del frente
     private final List<Figure> figures = new ArrayList<>();
     private List<Figure> selectedFigures = new ArrayList<>();
 
@@ -46,7 +46,7 @@ public class CanvasState {
         selectedFigures = new ArrayList<>();
     }
 
-    // Devuelve si el punto esta dentro de alguna figura seleccionada
+    // Devuelve si el punto está dentro de alguna figura seleccionada
     public boolean belongsToASelectedFigure(Point eventPoint) {
         for(Figure selectedFigure : selectedFigures) {
             if (selectedFigure.contains(eventPoint))
@@ -55,7 +55,7 @@ public class CanvasState {
         return false;
     }
 
-    // Devuelve la figura que esta mas arriba de las que el punto pertenece (por eso recorremos la lista al reves)
+    // Devuelve la figura que está más arriba de las que el punto pertenece (por eso recorremos la lista al revés)
     // Si no encuentra ninguna devuelve null
     public Figure getFigureOnPoint(Point eventPoint) {
         Iterator<Figure> reversedFigures = reverseFigureIterator();
@@ -68,7 +68,7 @@ public class CanvasState {
         return null;
     }
 
-    // Selecciona las figuras que se encuentren dentro de la figura de eseleccion recibida
+    // Selecciona las figuras que se encuentren dentro de la figura de selección recibida
     // Devuelve si agrego alguna figura o no
     public boolean selectFigures(Figure selectionFigure) {
         boolean found = false;
@@ -81,8 +81,8 @@ public class CanvasState {
         return found;
     }
 
-    // Cambia el estado de seleccion de la figura que este mas arriba a la que el punto pertenece
-    // Por eso la recorremos al reves
+    // Cambia el estado de selección de la figura que este más arriba a la que el punto pertenece
+    // Por eso la recorremos al revés
     public boolean toggleSelectionFigure(Point selectionPoint) {
 
         Iterator<Figure> reversedFigures = reverseFigureIterator();
@@ -141,8 +141,8 @@ public class CanvasState {
         }
     }
 
-    // Devuelve un iterador que reccore al reves, para poder encontrar la figura que
-    // este arriba de todas en el canvas mas rapido
+    // Devuelve un iterador que recorre al revés, para poder encontrar la figura que
+    // este arriba de todas en el canvas más rápido
     private Iterator<Figure> reverseFigureIterator() {
         return new Iterator<>() {
             private int index = figures.size() - 1;

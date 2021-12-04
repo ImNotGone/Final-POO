@@ -11,25 +11,25 @@ import javafx.scene.paint.Color;
 
 public class PaintPane extends BorderPane {
 
-	/* ========== Declaracion de macros ========== */
+	/* ========== Declaración de macros ========== */
 
 	private static final int CANVAS_WIDTH = 800;
 	private static final int CANVAS_HEIGHT = 600;
-	private static final int MOVEMENT_SPEED = 100; //Mientras mas chico el valor, mas rapido se mueven
+	private static final int MOVEMENT_SPEED = 100; //Mientras más chico el valor, más rápido se mueven
 	private static final double MAX_COLOR_VALUE = 255.0; //Para convertir el color en escala de enteros [0-255] a escala de reales [0-1]
 	private static final double SELECTION_RECTANGLE_LINE_WIDTH = 1.0;
 	private static final java.awt.Color SELECTION_RECTANGLE_LINE_COLOR = java.awt.Color.RED;
 	private static final java.awt.Color SELECTION_RECTANGLE_FILL_COLOR = new java.awt.Color(0f,0f,0f,0f);
 	private static final Color FIGURE_SELECTION_LINE_COLOR = Color.RED;
 	private static final String SELECTION_RECTANGLE_STRING = "Seleccionando figuras";
-	private static final String SELECTION_STRING = "Estan seleccionadas: ";
+	private static final String SELECTION_STRING = "Están seleccionadas: ";
 	private static final String DESELECTION_STRING = "Figuras deseleccionadas";
 	private static final String NONE_FOUND_STRING = "Ninguna figura encontrada";
 	private static final String CANT_MOVE_FORWARD_STRING = "Debe seleccionar las figuras que desea mover al frente";
 	private static final String CANT_MOVE_BACK_STRING = "Debe seleccionar las figuras que desea mover al fondo";
 	private static final String CANT_DELETE_STRING = "Debe seleccionar las figuras que desea borrar";
 	private static final String ON_DELETION_STRING = "Se borraron las figuras seleccionadas";
-	private static final String MUST_SELECT_BUTTON_STRING = "Debe seleccionar algun boton";
+	private static final String MUST_SELECT_BUTTON_STRING = "Debe seleccionar algún botón";
 
 	/* ========== Variables de instancia ========== */
 
@@ -63,9 +63,9 @@ public class PaintPane extends BorderPane {
 		// Decidimos que al apretar los botones de figuras se deseleccionen todas las figuras
 		toolBar.setFigureButtonAction(event -> {canvasState.resetSelectedFigures(); redrawCanvas();});
 
-		// Al tocar el boton de borrar, mover al fondo o mover al frente
-		// si no hay figuras seleccionadas no se realiza la accion y se muestra un mensaje en la barra de estado.
-		// Luego de tocar el boton, se selecciona automaticamente el boton de seleccion para comodidad del usuario
+		// Al tocar el botón de borrar, mover al fondo o mover al frente
+		// si no hay figuras seleccionadas no se realiza la acción y se muestra un mensaje en la barra de estado.
+		// Luego de tocar el botón, se selecciona automáticamente el botón de selección para comodidad del usuario
 
 		toolBar.setForwardAction(event -> {
 			if(isSelectedActionPossible(CANT_MOVE_FORWARD_STRING)) {
@@ -96,7 +96,7 @@ public class PaintPane extends BorderPane {
 		/* ========== Mouse events en el Canvas ========== */
 
 		canvas.setOnMousePressed(event -> {
-			// Si hay algun boton presionado actualizamos el punto de inicio (startPoint) con el punto actual.
+			// Si hay algún botón presionado actualizamos el punto de inicio (startPoint) con el punto actual.
 			// Si no hay ninguno presionado se muestra un mensaje en la barra de estado
 			for (ToggleButton button : toolBar.getButtons()) {
 				if (button.isSelected()) {
@@ -109,7 +109,7 @@ public class PaintPane extends BorderPane {
 
 		canvas.setOnMouseReleased(event -> {
 			// Si no existe un punto de inicio no hacemos nada para evitar un NullPointerException
-			// Si el mouse se solto en el mismo lugar que cuando se apreto no hacemos nada para no interferir con el "click"
+			// Si el mouse se soltó en el mismo lugar que cuando se apretó no hacemos nada para no interferir con el "click"
 			if (startPoint == null || event.isStillSincePress()) {
 				resetStartPoint();
 				return;
@@ -120,7 +120,7 @@ public class PaintPane extends BorderPane {
 			// Una vez soltado el mouse reseteamos el punto de inicio
 			resetStartPoint();
 
-			// Esto se hace para deseleccionar las figuras si al soltar el mouse luego de moverlas el mouse no esta dentro de alguna
+			// Esto se hace para deseleccionar las figuras si al soltar el mouse luego de moverlas el mouse no está dentro de alguna
 			if (!canvasState.isSelectedFiguresEmpty()) {
 				if (!canvasState.belongsToASelectedFigure(endPoint))
 					canvasState.resetSelectedFigures();
@@ -129,12 +129,12 @@ public class PaintPane extends BorderPane {
 				return;
 			}
 
-			// Antes de interactuar con la figura en creacion 'currentFigure' checkeamos que esta no sea null
+			// Antes de interactuar con la figura en creación 'currentFigure' chequeamos que esta no sea null
 			if (currentFigure == null)
 				return;
 
-			// Una vez suelto el mouse, si esta seleccionado el boton de seleccion y no hay figuras seleccionadas
-			// 'currentFigure' es la figura de seleccion, entonces seleccionamos las figuras que se encuentren dentro de esta
+			// Una vez suelto el mouse, si está seleccionado el botón de selección y no hay figuras seleccionadas
+			// 'currentFigure' es la figura de selección, entonces seleccionamos las figuras que se encuentren dentro de esta
 			if (toolBar.isSelectionButtonSelected() && canvasState.isSelectedFiguresEmpty()) {
 				if (!canvasState.selectFigures(currentFigure))
 					canvasState.resetSelectedFigures();
@@ -146,7 +146,7 @@ public class PaintPane extends BorderPane {
 			}
 
 			// Una vez suelto el mouse, la figura que creo el usuario se agrega al canvasState
-			// Si el boton de seleccion esta activo, 'currentFigure' es el rectangulo de seleccion, entonces no se agrega
+			// Si el botón de selección está activo, 'currentFigure' es el rectángulo de selección, entonces no se agrega
 			if(!toolBar.isSelectionButtonSelected()) {
 				canvasState.addFigure(currentFigure);
 				resetCurrentFigure();
@@ -155,15 +155,15 @@ public class PaintPane extends BorderPane {
 
 
 		canvas.setOnMouseClicked(event -> {
-			// Si no esta apretado el boton de seleccion no hay nada que hacer
-			// Este evento no deberia interferir con el de soltar el mouse,
-			// entonces agregamos la condicion de que el mouse apriete y suelte en el mismo lugar
+			// Si no está apretado el botón de selección no hay nada que hacer
+			// Este evento no debería interferir con el de soltar el mouse,
+			// entonces agregamos la condición de que el mouse apriete y suelte en el mismo lugar
 			if(!(toolBar.isSelectionButtonSelected() && event.isStillSincePress()))
 				return;
 
 			Point eventPoint = new Point(event.getX(), event.getY());
 
-			// Si se clickea en una figura, esta cambia su estado de seleccion
+			// Si se clickea en una figura, esta cambia su estado de selección
 			// Si no se clickea en ninguna figura se deseleccionan todas las figuras
 			boolean found = canvasState.toggleSelectionFigure(eventPoint);
 			if (!found) {
@@ -175,7 +175,7 @@ public class PaintPane extends BorderPane {
 
 		canvas.setOnMouseMoved(event -> {
 			// Si hay figuras seleccionadas el mensaje de estado (Status Label)
-			// no deberia actualizarse al mover el mouse (debe seguir mostrando las figuras seleccionadas)
+			// no debería actualizarse al mover el mouse (debe seguir mostrando las figuras seleccionadas)
 			if (!canvasState.isSelectedFiguresEmpty())
 				return;
 
@@ -195,7 +195,7 @@ public class PaintPane extends BorderPane {
 
 			Point eventPoint = new Point(event.getX(), event.getY());
 
-			// Si esta seleccionado el boton de seleccion y hay figuras seleccionadas, las muevo
+			// Si está seleccionado el botón de selección y hay figuras seleccionadas, las muevo
 			if(toolBar.isSelectionButtonSelected() && !canvasState.isSelectedFiguresEmpty()) {
 				double diffX = (eventPoint.getX() - startPoint.getX()) / MOVEMENT_SPEED;
 				double diffY = (eventPoint.getY() - startPoint.getY()) / MOVEMENT_SPEED;
@@ -204,23 +204,23 @@ public class PaintPane extends BorderPane {
 				return;
 			}
 
-			// Se cambio la funcionalidad de la creacion de figuras a la accion de 'drag' asi el usuario
-			// puede ver en tiempo real la figura que esta creando, al soltar el mouse se termina de crear la figura y se agrega al 'canvasState'
+			// Se cambió la funcionalidad de la creación de figuras a la acción de 'drag' asi el usuario
+			// puede ver en tiempo real la figura que está creando, al soltar el mouse se termina de crear la figura y se agrega al 'canvasState'
 
 			// Mientras se 'draguea' el mouse, actualizamos el mensaje de estado (Status Label) con el punto actual
 			// si el mouse se va afuera del canvas, no lo actualizamos
 			if(isOnCanvas(eventPoint))
 				statusPane.updateStatus(eventPoint.toString());
 
-			// Solo se permite crear figuras de esquina superior hacia esquina inferior, las lineas se pueden crear para cualquier direccion
+			// Solo se permite crear figuras de esquina superior hacía esquina inferior, las líneas se pueden crear para cualquier dirección
 			if (!isEndPointValid(eventPoint) && !toolBar.isLineButtonSelected()) {
 				redrawCanvas();
 				resetCurrentFigure();
 				return;
 			}
 
-			// Si esta activo el boton de seleccion creamos el rectangulo de seleccion
-			// sino iteramos por los botones para ver que figura creamos
+			// Si está activo el botón de selección creamos el rectángulo de selección
+			// si no iteramos por los botones para ver que figura creamos
 			if (toolBar.isSelectionButtonSelected()) {
 				currentFigure = new Rectangle(SELECTION_RECTANGLE_LINE_WIDTH, SELECTION_RECTANGLE_LINE_COLOR, SELECTION_RECTANGLE_FILL_COLOR, startPoint, eventPoint);
 			} else {
@@ -240,9 +240,9 @@ public class PaintPane extends BorderPane {
 		});
 	}
 
-	/* ========== Metodos auxiliares ========== */
+	/* ========== Métodos auxiliares ========== */
 
-	// Reinicia el canvas y dibuja todas las figuras denuevo
+	// Reinicia el canvas y dibuja todas las figuras de nuevo
 	private void redrawCanvas() {
 		gc.clearRect(0, 0, getWidth(), getHeight());
 		for(Figure figure : canvasState.figures()) {
@@ -250,7 +250,7 @@ public class PaintPane extends BorderPane {
 		}
 	}
 
-	// Se encarga de dibujar la figura que recibe, si la misma esta seleccionada le pone un borde rojo para distinguirla
+	// Se encarga de dibujar la figura que recibe, si la misma está seleccionada le pone un borde rojo para distinguirla
 	// No encontramos una manera de limpiar la parte del instanceof sin ensuciar el back
 	// Lamentablemente la tuvimos que dejar asi
 	private void drawFigure(Figure figure) {
@@ -273,9 +273,9 @@ public class PaintPane extends BorderPane {
 	}
 
 	// Actualiza el mensaje de estado (Status Label)
-	// Si hay figuras seleccionadas se muestra la descripcion de las mismas
-	// Si no hay figuras seleccionadas y 'found' es verdadero es porque se hizo click en la ultima figura seleccionada
-	// Si no hay figuras seleccionadas y 'found' es false es porque se hizo click afuera de las figuras y no se encontro ninguna
+	// Si hay figuras seleccionadas se muestra la descripción de las mismas
+	// Si no hay figuras seleccionadas y 'found' es verdadero es porque se hizo click en la última figura seleccionada
+	// Si no hay figuras seleccionadas y 'found' es false es porque se hizo click afuera de las figuras y no se encontró ninguna
 	private void updateSelectedFiguresLabel(boolean found) {
 		if(canvasState.isSelectedFiguresEmpty()) {
 			statusPane.updateStatus(found ? DESELECTION_STRING : NONE_FOUND_STRING);
@@ -288,7 +288,7 @@ public class PaintPane extends BorderPane {
 		statusPane.updateStatus(label.toString());
 	}
 
-	// Si no hay figuras seleccionadas, al tocarse el boton de borrar, mandar al frente o mandar al fondo
+	// Si no hay figuras seleccionadas, al tocarse el botón de borrar, mandar al frente o mandar al fondo
 	// se muestra 'errorMessage' en el mensaje de estado, devuelve si hay figuras seleccionadas
 	private boolean isSelectedActionPossible(String errorMessage) {
 		if(canvasState.isSelectedFiguresEmpty()) {

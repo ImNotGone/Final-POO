@@ -12,25 +12,25 @@ import javafx.scene.paint.Color;
 
 public class ToolBar extends VBox {
 
-    /* ========== Declaracion de macros ========== */
+    /* ========== Declaración de macros ========== */
     private static final int MIN_LINE_WIDTH = 1;
     private static final int MAX_LINE_WIDTH = 50;
     private static final int DEFAULT_LINE_WIDTH = 3;
     private static final Color LINE_COLOR = Color.BLACK;
     private static final Color FILL_COLOR = Color.YELLOW;
     private static final String SELECTION_BUTTON_LABEL = "Seleccionar";
-    private static final String CIRCLE_BUTTON_LABEL = "Circulo";
+    private static final String CIRCLE_BUTTON_LABEL = "Círculo";
     private static final String SQUARE_BUTTON_LABEL = "Cuadrado";
-    private static final String RECTANGLE_BUTTON_LABEL = "Rectangulo";
+    private static final String RECTANGLE_BUTTON_LABEL = "Rectángulo";
     private static final String ELLIPSE_BUTTON_LABEL = "Elipse";
-    private static final String LINE_BUTTON_LABEL = "Linea";
+    private static final String LINE_BUTTON_LABEL = "Línea";
     private static final String DELETE_BUTTON_LABEL = "Borrar";
     private static final String BACK_BUTTON_LABEL = "Al fondo";
     private static final String FORWARD_BUTTON_LABEL = "Al frente";
     private static final String LINE_OPTIONS_LABEL = "Borde";
     private static final String FILL_OPTIONS_LABEL = "Relleno";
 
-    /* ========== Creaccion de botones ========== */
+    /* ========== Creación de botones ========== */
     private final ToggleButton selectionButton = new ToggleButton(SELECTION_BUTTON_LABEL);
     private final FigureToggleButton circleButton = new FigureToggleButton(CIRCLE_BUTTON_LABEL, (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Circle(lineWidth, lineColor, fillColor, startPoint, Math.abs(endPoint.getX() - startPoint.getX())));
     private final FigureToggleButton squareButton = new FigureToggleButton(SQUARE_BUTTON_LABEL, (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Square(lineWidth, lineColor, fillColor, startPoint, Math.abs(startPoint.getX() - endPoint.getX())));
@@ -93,8 +93,8 @@ public class ToolBar extends VBox {
         setPrefWidth(100);
     }
 
-    /* ========== Metodos auxiliares ========== */
-    // La barra de herramientas recibe por setters las acciones que debe realizar cada boton
+    /* ========== Métodos auxiliares ========== */
+    // La barra de herramientas recibe por setters las acciones que debe realizar cada botón
 
     // Permite configurar el setOnAction para todos los botones de figuras
     public void setFigureButtonAction(EventHandler<ActionEvent> action) {
@@ -103,32 +103,32 @@ public class ToolBar extends VBox {
         }
     }
 
-    // Configuracion de setOnAction para forwardButton
+    // Configuration de setOnAction para forwardButton
     public void setForwardAction(EventHandler<ActionEvent> action){
         forwardButton.setOnAction(action);
     }
 
-    // Configuracion de setOnAction para backButton
+    // Configuración de setOnAction para backButton
     public void setBackAction(EventHandler<ActionEvent> action){
         backButton.setOnAction(action);
     }
 
-    // Configuracion de setOnAction para deleteButton
+    // Configuración de setOnAction para deleteButton
     public void setDeleteAction(EventHandler<ActionEvent> action){
         deleteButton.setOnAction(action);
     }
 
-    // Configuracion de setOnAction para fillColorPicker
+    // Configuración de setOnAction para fillColorPicker
     public void setFillColorPickerAction(EventHandler<ActionEvent> action){
         fillColorPicker.setOnAction(action);
     }
 
-    // Configuracion de setOnAction para lineColorPicker
+    // Configuración de setOnAction para lineColorPicker
     public void setLineColorPickerAction(EventHandler<ActionEvent> action){
         lineColorPicker.setOnAction(action);
     }
 
-    // Configuracion de setOnMouseDragged y setOnMouseClicked para el lineWidthSlider
+    // Configuración de setOnMouseDragged y setOnMouseClicked para el lineWidthSlider
     public void setLineWidthSliderAction(EventHandler<? super MouseEvent> action) { lineWidthSlider.setOnMouseDragged(action); lineWidthSlider.setOnMouseClicked(action);}
 
     // Devuelve el array con los botones de figuras
@@ -156,18 +156,18 @@ public class ToolBar extends VBox {
         return lineWidthSlider.getValue();
     }
 
-    // Cambia el boton actual, por el boton de seleccion
+    // Cambia el botón actual, por el botón de selección
     public void changeToSelect() {
         selectionButton.setSelected(true);
         selectionButton.requestFocus();
     }
 
-    // Devuelve si el boton de seleccion esta activo
+    // Devuelve si el botón de selección está activo
     public boolean isSelectionButtonSelected(){
         return selectionButton.isSelected();
     }
 
-    // Devuelve si el boton de Linea esta activo
+    // Devuelve si el botón de línea está activo
     public boolean isLineButtonSelected() {
         return lineButton.isSelected();
     }

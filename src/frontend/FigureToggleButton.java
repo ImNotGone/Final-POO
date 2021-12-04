@@ -6,7 +6,7 @@ import javafx.scene.control.ToggleButton;
 
 import java.awt.*;
 
-// Para que cada boton pueda construir la figura que le corresponde
+// Para que cada botón pueda construir la figura que le corresponde
 // Recibe cómo construir una figura en su constructor
 public class FigureToggleButton extends ToggleButton {
 
