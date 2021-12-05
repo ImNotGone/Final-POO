@@ -257,17 +257,20 @@ public class PaintPane extends BorderPane {
 		gc.setStroke(canvasState.selectedFigures().contains(figure) ? FIGURE_SELECTION_LINE_COLOR : toFxColor(figure.getLineColor()));
 		gc.setLineWidth(figure.getLineWidth());
 		gc.setFill(toFxColor(figure.getFillColor()));
-		if (figure instanceof Rectangle rectangle) {
+		if (figure instanceof Rectangle ) {
+			Rectangle rectangle = (Rectangle) figure;
 			gc.fillRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
 					Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
 			gc.strokeRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
 					Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-		} else if (figure instanceof Ellipse ellipse) {
+		} else if (figure instanceof Ellipse ) {
+			Ellipse ellipse = (Ellipse) figure;
 			double dx = ellipse.getDx();
 			double dy = ellipse.getDy();
 			gc.fillOval(ellipse.getCenterPoint().getX() - (dx/2), ellipse.getCenterPoint().getY() - (dy/2), dx, dy);
 			gc.strokeOval(ellipse.getCenterPoint().getX() - (dx/2), ellipse.getCenterPoint().getY() - (dy/2), dx, dy);
-		} else if (figure instanceof Line line) {
+		} else if (figure instanceof Line) {
+			Line line = (Line) figure;
 			gc.strokeLine(line.getStart().getX(), line.getStart().getY(), line.getEnd().getX(), line.getEnd().getY());
 		}
 	}
