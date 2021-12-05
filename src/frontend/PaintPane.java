@@ -237,11 +237,7 @@ public class PaintPane extends BorderPane {
 			if (toolBar.isSelectionButtonSelected()) {
 				currentFigure = new Rectangle(SELECTION_RECTANGLE_LINE_WIDTH, SELECTION_RECTANGLE_LINE_COLOR, SELECTION_RECTANGLE_FILL_COLOR, startPoint, eventPoint);
 			} else {
-				for (FigureToggleButton figureButton : toolBar.getFigureButtons()) {
-					if (figureButton.isSelected()) {
-						currentFigure = figureButton.buildFigure(toolBar.getLineWidth(), toBackendColor(toolBar.getLineColor()), toBackendColor(toolBar.getFillColor()), startPoint, eventPoint);
-					}
-				}
+				currentFigure = createFigure(eventPoint);
 			}
 
 			// Dibujamos la figura actual y actualizamos el mensaje de estado (Status Label)
@@ -254,6 +250,17 @@ public class PaintPane extends BorderPane {
 	}
 
 	/* ========== Métodos auxiliares ========== */
+
+	// Crea la figura según el botón de figura que esté seleccionado
+	// Si no hay ninguno seleccionado retorna null
+	private Figure createFigure(Point eventPoint) {
+		for (FigureToggleButton figureButton : toolBar.getFigureButtons()) {
+			if (figureButton.isSelected()) {
+				return figureButton.buildFigure(toolBar.getLineWidth(), toBackendColor(toolBar.getLineColor()), toBackendColor(toolBar.getFillColor()), startPoint, eventPoint);
+			}
+		}
+		return null;
+	}
 
 	// Reinicia el canvas y dibuja todas las figuras de nuevo
 	private void redrawCanvas() {
