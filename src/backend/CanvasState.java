@@ -1,11 +1,7 @@
 package backend;
 
-import backend.model.Figure;
-import backend.model.Point;
-
-import java.awt.*;
+import backend.model.*;
 import java.util.*;
-import java.util.List;
 
 public class CanvasState {
 
@@ -128,14 +124,14 @@ public class CanvasState {
     }
 
     // Actualiza el color del outline de las figuras seleccionadas
-    public void setSelectedFiguresLineColor(Color lineColor) {
+    public void setSelectedFiguresLineColor(BackendColor lineColor) {
         for(Figure figure : selectedFigures) {
             figure.setLineColor(lineColor);
         }
     }
 
     // Actualiza el color del relleno de las figuras seleccionadas
-    public void setSelectedFiguresFillColor(Color fillColor) {
+    public void setSelectedFiguresFillColor(BackendColor fillColor) {
         for(Figure figure : selectedFigures) {
             figure.setFillColor(fillColor);
         }

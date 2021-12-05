@@ -1,14 +1,12 @@
 package backend.model;
 
 
-import java.awt.*;
-
 public class Ellipse extends Figure {
 
     protected final Point centerPoint;
     protected final double dx, dy;
 
-    public Ellipse(double lineWidth, Color lineColor, Color fillColor, Point centerPoint, double dx, double dy) {
+    public Ellipse(double lineWidth, BackendColor lineColor, BackendColor fillColor, Point centerPoint, double dx, double dy) {
         super(lineWidth, lineColor, fillColor);
         this.centerPoint = centerPoint;
         this.dx = dx;

@@ -1,13 +1,11 @@
 package backend.model;
 
 
-import java.awt.*;
-
 public class Rectangle extends Figure {
 
     private final Point topLeft, bottomRight;
 
-    public Rectangle(double lineWidth, Color lineColor, Color fillColor, Point topLeft, Point bottomRight) {
+    public Rectangle(double lineWidth, BackendColor lineColor, BackendColor fillColor, Point topLeft, Point bottomRight) {
         super(lineWidth, lineColor, fillColor);
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;

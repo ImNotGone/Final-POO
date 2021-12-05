@@ -16,11 +16,13 @@ public class PaintPane extends BorderPane {
 	private static final int CANVAS_WIDTH = 800;
 	private static final int CANVAS_HEIGHT = 600;
 	private static final int MOVEMENT_SPEED = 100; //Mientras más chico el valor, más rápido se mueven
-	private static final double MAX_COLOR_VALUE = 255.0; //Para convertir el color en escala de enteros [0-255] a escala de reales [0-1]
 	private static final double SELECTION_RECTANGLE_LINE_WIDTH = 1.0;
-	private static final java.awt.Color SELECTION_RECTANGLE_LINE_COLOR = java.awt.Color.RED;
-	private static final java.awt.Color SELECTION_RECTANGLE_FILL_COLOR = new java.awt.Color(0f,0f,0f,0f);
+	private static final BackendColor SELECTION_RECTANGLE_LINE_COLOR = BackendColor.RED;
+	private static final BackendColor SELECTION_RECTANGLE_FILL_COLOR = BackendColor.TRANSPARENT;
 	private static final Color FIGURE_SELECTION_LINE_COLOR = Color.RED;
+	private static final String CREATING_FIGURE_STRING = "Creando figura: ";
+	private static final String CREATED_FIGURE_STRING = "Figura creada: ";
+	private static final String CANCELED_FIGURE_CREATION_STRING = "Acción cancelada";
 	private static final String SELECTION_RECTANGLE_STRING = "Seleccionando figuras";
 	private static final String SELECTION_STRING = "Están seleccionadas: ";
 	private static final String DESELECTION_STRING = "Figuras deseleccionadas";
@@ -90,12 +92,21 @@ public class PaintPane extends BorderPane {
 			toolBar.changeToSelect();
 		});
 		toolBar.setLineWidthSliderAction(event -> {canvasState.setSelectedFigureLineWidth(toolBar.getLineWidth()); redrawCanvas();});
-		toolBar.setLineColorPickerAction(event -> {canvasState.setSelectedFiguresLineColor(toJavaColor(toolBar.getLineColor())); redrawCanvas();});
-		toolBar.setFillColorPickerAction(event -> {canvasState.setSelectedFiguresFillColor(toJavaColor(toolBar.getFillColor())); redrawCanvas();});
+		toolBar.setLineColorPickerAction(event -> {canvasState.setSelectedFiguresLineColor(toBackendColor(toolBar.getLineColor())); redrawCanvas();});
+		toolBar.setFillColorPickerAction(event -> {canvasState.setSelectedFiguresFillColor(toBackendColor(toolBar.getFillColor())); redrawCanvas();});
 
 		/* ========== Mouse events en el Canvas ========== */
 
 		canvas.setOnMousePressed(event -> {
+
+			// Si se esta creando una figura y se aprieta el mouse antes de soltarlo
+			// se cancela la creacion de la figura y se actualiza la barra de estado
+			if (currentFigure != null) {
+				resetCurrentFigure();
+				redrawCanvas();
+				statusPane.updateStatus(CANCELED_FIGURE_CREATION_STRING);
+			}
+
 			// Si hay algún botón presionado actualizamos el punto de inicio (startPoint) con el punto actual.
 			// Si no hay ninguno presionado se muestra un mensaje en la barra de estado
 			for (ToggleButton button : toolBar.getButtons()) {
@@ -122,10 +133,11 @@ public class PaintPane extends BorderPane {
 
 			// Esto se hace para deseleccionar las figuras si al soltar el mouse luego de moverlas el mouse no está dentro de alguna
 			if (!canvasState.isSelectedFiguresEmpty()) {
-				if (!canvasState.belongsToASelectedFigure(endPoint))
+				if (!canvasState.belongsToASelectedFigure(endPoint)) {
 					canvasState.resetSelectedFigures();
+					statusPane.updateStatus(DESELECTION_STRING);
+				}
 				redrawCanvas();
-				statusPane.updateStatus(DESELECTION_STRING);
 				return;
 			}
 
@@ -149,6 +161,7 @@ public class PaintPane extends BorderPane {
 			// Si el botón de selección está activo, 'currentFigure' es el rectángulo de selección, entonces no se agrega
 			if(!toolBar.isSelectionButtonSelected()) {
 				canvasState.addFigure(currentFigure);
+				statusPane.updateStatus(CREATED_FIGURE_STRING + currentFigure.toString());
 				resetCurrentFigure();
 			}
 		});
@@ -226,7 +239,7 @@ public class PaintPane extends BorderPane {
 			} else {
 				for (FigureToggleButton figureButton : toolBar.getFigureButtons()) {
 					if (figureButton.isSelected()) {
-						currentFigure = figureButton.buildFigure(toolBar.getLineWidth(), toJavaColor(toolBar.getLineColor()), toJavaColor(toolBar.getFillColor()), startPoint, eventPoint);
+						currentFigure = figureButton.buildFigure(toolBar.getLineWidth(), toBackendColor(toolBar.getLineColor()), toBackendColor(toolBar.getFillColor()), startPoint, eventPoint);
 					}
 				}
 			}
@@ -235,7 +248,7 @@ public class PaintPane extends BorderPane {
 			if(currentFigure != null) {
 				redrawCanvas();
 				drawFigure(currentFigure);
-				statusPane.updateStatus(toolBar.isSelectionButtonSelected() ? SELECTION_RECTANGLE_STRING : currentFigure.toString());
+				statusPane.updateStatus(toolBar.isSelectionButtonSelected() ? SELECTION_RECTANGLE_STRING : CREATING_FIGURE_STRING + currentFigure.toString());
 			}
 		});
 	}
@@ -319,13 +332,13 @@ public class PaintPane extends BorderPane {
 		return eventPoint.getX() >= 0 && eventPoint.getY() >= 0 && eventPoint.getX() <= CANVAS_WIDTH && eventPoint.getY() <= CANVAS_HEIGHT;
 	}
 
-	// Genera un color de javaFX a partir de un color de java.awt
-	private Color toFxColor(java.awt.Color javaColor) {
-		return new Color(javaColor.getRed() / MAX_COLOR_VALUE, javaColor.getGreen() / MAX_COLOR_VALUE, javaColor.getBlue() / MAX_COLOR_VALUE, javaColor.getAlpha() / MAX_COLOR_VALUE);
+	// Genera un color de javaFX a partir de un color de back-end
+	private Color toFxColor(BackendColor backendColor) {
+		return new Color(backendColor.getRed(), backendColor.getGreen(), backendColor.getBlue(), backendColor.getTransparency());
 	}
 
-	// Genera un color de java.awt a partir de un color de javaFX
-	private java.awt.Color toJavaColor(Color fxColor) {
-		return new java.awt.Color((float) fxColor.getRed(),(float) fxColor.getGreen(),(float) fxColor.getBlue(),(float) fxColor.getOpacity());
+	// Genera un color del back-end a partir de un color de javaFX
+	private BackendColor toBackendColor(Color fxColor) {
+		return new BackendColor(fxColor.getRed(), fxColor.getGreen(), fxColor.getBlue(), fxColor.getOpacity());
 	}
 }

@@ -1,11 +1,10 @@
 package backend.model;
 
 
-import java.awt.*;
 
 public class Circle extends Ellipse {
 
-    public Circle(double lineWidth, Color lineColor, Color fillColor, Point centerPoint, double radius) {
+    public Circle(double lineWidth, BackendColor lineColor, BackendColor fillColor, Point centerPoint, double radius) {
         super(lineWidth, lineColor, fillColor, centerPoint, radius*2, radius*2);
     }
 

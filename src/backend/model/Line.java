@@ -1,13 +1,11 @@
 package backend.model;
 
 
-import java.awt.*;
-
 public class Line extends Figure {
 
     private final Point start, end;
 
-    public Line(double lineWidth, Color lineColor, Color fillColor, Point start, Point end) {
+    public Line(double lineWidth, BackendColor lineColor, BackendColor fillColor, Point start, Point end) {
         super(lineWidth, lineColor, fillColor);
         this.start = start;
         this.end = end;
