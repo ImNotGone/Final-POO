@@ -3,8 +3,8 @@ package backend.model;
 
 public class Ellipse extends Figure {
 
-    protected final Point centerPoint;
-    protected final double dx, dy;
+    private final Point centerPoint;
+    private final double dx, dy;
 
     public Ellipse(double lineWidth, BackendColor lineColor, BackendColor fillColor, Point centerPoint, double dx, double dy) {
         super(lineWidth, lineColor, fillColor);
