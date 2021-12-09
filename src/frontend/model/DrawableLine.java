@@ -6,7 +6,7 @@ import backend.model.Point;
 import javafx.scene.canvas.GraphicsContext;
 
 public class DrawableLine extends Line {
-    GraphicsContext gc;
+    private final GraphicsContext gc;
 
     public DrawableLine(double lineWidth, BackendColor lineColor, BackendColor fillColor, Point start, Point end, GraphicsContext gc) {
         super(lineWidth, lineColor, fillColor, start, end);

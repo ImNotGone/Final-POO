@@ -6,7 +6,7 @@ import backend.model.Square;
 import javafx.scene.canvas.GraphicsContext;
 
 public class DrawableSquare extends Square {
-    GraphicsContext gc;
+    private final GraphicsContext gc;
 
     public DrawableSquare(double lineWidth, BackendColor lineColor, BackendColor fillColor, Point topLeft, double side, GraphicsContext gc) {
         super(lineWidth, lineColor, fillColor, topLeft, side);

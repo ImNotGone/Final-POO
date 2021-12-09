@@ -6,7 +6,7 @@ import backend.model.Rectangle;
 import javafx.scene.canvas.GraphicsContext;
 
 public class DrawableRectangle extends Rectangle {
-    GraphicsContext gc;
+    private final GraphicsContext gc;
 
     public DrawableRectangle(double lineWidth, BackendColor lineColor, BackendColor fillColor, Point topLeft, Point bottomRight, GraphicsContext gc) {
         super(lineWidth, lineColor, fillColor, topLeft, bottomRight);

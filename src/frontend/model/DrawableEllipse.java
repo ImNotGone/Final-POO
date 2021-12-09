@@ -6,7 +6,7 @@ import backend.model.Point;
 import javafx.scene.canvas.GraphicsContext;
 
 public class DrawableEllipse extends Ellipse {
-    GraphicsContext gc;
+    private final GraphicsContext gc;
 
     public DrawableEllipse(double lineWidth, BackendColor lineColor, BackendColor fillColor, Point centerPoint, double dx, double dy, GraphicsContext gc) {
         super(lineWidth, lineColor, fillColor, centerPoint, dx, dy);
