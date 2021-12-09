@@ -9,7 +9,6 @@ public class BackendColor {
     private final double transparency; // valor de trasparencia del color en escala de [0-1]
 
     // Macros que vamos a utilizar
-
     public static final BackendColor RED = new BackendColor(1.0, 0, 0, 1.0);
     public static final BackendColor TRANSPARENT = new BackendColor(0, 0, 0, 0);
 

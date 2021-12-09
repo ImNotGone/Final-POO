@@ -1,7 +1,7 @@
 package backend.model;
 
 
-public class Rectangle extends Figure {
+public abstract class Rectangle extends Figure {
 
     private final Point topLeft, bottomRight;
 

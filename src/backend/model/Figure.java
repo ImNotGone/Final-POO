@@ -1,15 +1,12 @@
 package backend.model;
 
-public abstract class Figure implements Movable {
+import backend.interfaces.*;
+
+public abstract class Figure implements Movable, Selectable, Coloreable, Drawable {
 
     private double lineWidth;
     private BackendColor lineColor;
     private BackendColor fillColor;
-
-    // Permite saber si un punto pertenece a una figura
-    public abstract boolean contains(Point point);
-    // Permite saber si una figura está contenida en la otra
-    public abstract boolean isContained(Figure figure);
 
     public Figure(double lineWidth, BackendColor lineColor, BackendColor fillColor){
         setFigureProperties(lineWidth, lineColor, fillColor);

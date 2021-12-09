@@ -7,7 +7,7 @@ public class CanvasState {
 
     // Colecciones de figuras necesarias
     // La primera figura es la del fondo, la última es la del frente
-    private final List<Figure> figures = new ArrayList<>();
+    private final List<Figure> figures = new LinkedList<>();
     private List<Figure> selectedFigures = new ArrayList<>();
 
     // Agrega una figura a la lista de figuras
@@ -80,7 +80,6 @@ public class CanvasState {
     // Cambia el estado de selección de la figura que este más arriba a la que el punto pertenece
     // Por eso la recorremos al revés
     public boolean toggleSelectionFigure(Point selectionPoint) {
-
         Iterator<Figure> reversedFigures = reverseFigureIterator();
         Figure figure;
         while (reversedFigures.hasNext()) {

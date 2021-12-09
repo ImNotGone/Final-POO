@@ -1,7 +1,7 @@
 package backend.model;
 
 
-public class Line extends Figure {
+public abstract class Line extends Figure {
 
     private final Point start, end;
 

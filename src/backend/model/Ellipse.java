@@ -1,7 +1,7 @@
 package backend.model;
 
 
-public class Ellipse extends Figure {
+public abstract class Ellipse extends Figure {
 
     private final Point centerPoint;
     private final double dx, dy;

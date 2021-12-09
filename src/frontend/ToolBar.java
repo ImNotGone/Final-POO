@@ -1,6 +1,7 @@
 package frontend;
 
 import backend.model.*;
+import frontend.buttons.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -32,16 +33,11 @@ public class ToolBar extends VBox {
 
     /* ========== Creación de botones ========== */
     private final ToggleButton selectionButton = new ToggleButton(SELECTION_BUTTON_LABEL);
-    private final FigureToggleButton circleButton = new FigureToggleButton(CIRCLE_BUTTON_LABEL, (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Circle(lineWidth, lineColor, fillColor, startPoint, Math.abs(endPoint.getX() - startPoint.getX())));
-    private final FigureToggleButton squareButton = new FigureToggleButton(SQUARE_BUTTON_LABEL, (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Square(lineWidth, lineColor, fillColor, startPoint, Math.abs(startPoint.getX() - endPoint.getX())));
-    private final FigureToggleButton rectangleButton = new FigureToggleButton(RECTANGLE_BUTTON_LABEL, (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Rectangle(lineWidth, lineColor, fillColor, startPoint, endPoint));
-    private final FigureToggleButton ellipseButton = new FigureToggleButton(ELLIPSE_BUTTON_LABEL, (lineWidth, lineColor, fillColor, startPoint, endPoint) ->
-    {double dx = Math.abs(startPoint.getX() - endPoint.getX());
-        double dy = Math.abs(startPoint.getY() - endPoint.getY());
-        double x = (startPoint.getX()+endPoint.getX())/2;
-        double y = (startPoint.getY()+endPoint.getY())/2;
-        return new Ellipse(lineWidth, lineColor, fillColor, new Point(x, y),dx,dy);});
-    private final FigureToggleButton lineButton = new FigureToggleButton(LINE_BUTTON_LABEL, (lineWidth, lineColor, fillColor, startPoint, endPoint) -> new Line(lineWidth, lineColor, fillColor, startPoint, endPoint));
+    private final FigureToggleButton rectangleButton = new RectangleButton(RECTANGLE_BUTTON_LABEL);
+    private final FigureToggleButton circleButton = new CircleButton(CIRCLE_BUTTON_LABEL);
+    private final FigureToggleButton ellipseButton = new EllipseButton(ELLIPSE_BUTTON_LABEL);
+    private final FigureToggleButton squareButton = new SquareButton(SQUARE_BUTTON_LABEL);
+    private final FigureToggleButton lineButton = new LineButton(LINE_BUTTON_LABEL);
     private final ToggleButton deleteButton = new ToggleButton(DELETE_BUTTON_LABEL);
     private final ToggleButton backButton = new ToggleButton(BACK_BUTTON_LABEL);
     private final ToggleButton forwardButton = new ToggleButton(FORWARD_BUTTON_LABEL);

@@ -2,7 +2,7 @@ package backend.model;
 
 
 
-public class Circle extends Ellipse {
+public abstract class Circle extends Ellipse {
 
     public Circle(double lineWidth, BackendColor lineColor, BackendColor fillColor, Point centerPoint, double radius) {
         super(lineWidth, lineColor, fillColor, centerPoint, radius*2, radius*2);

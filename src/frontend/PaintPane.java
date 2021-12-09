@@ -2,6 +2,8 @@ package frontend;
 
 import backend.CanvasState;
 import backend.model.*;
+import frontend.buttons.FigureToggleButton;
+import frontend.model.DrawableRectange;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -235,7 +237,7 @@ public class PaintPane extends BorderPane {
 			// Si está activo el botón de selección creamos el rectángulo de selección
 			// si no iteramos por los botones para ver que figura creamos
 			if (toolBar.isSelectionButtonSelected()) {
-				currentFigure = new Rectangle(SELECTION_RECTANGLE_LINE_WIDTH, SELECTION_RECTANGLE_LINE_COLOR, SELECTION_RECTANGLE_FILL_COLOR, startPoint, eventPoint);
+				currentFigure = new DrawableRectange(SELECTION_RECTANGLE_LINE_WIDTH, SELECTION_RECTANGLE_LINE_COLOR, SELECTION_RECTANGLE_FILL_COLOR, startPoint, eventPoint, gc);
 			} else {
 				currentFigure = createFigure(eventPoint);
 			}
@@ -256,7 +258,7 @@ public class PaintPane extends BorderPane {
 	private Figure createFigure(Point eventPoint) {
 		for (FigureToggleButton figureButton : toolBar.getFigureButtons()) {
 			if (figureButton.isSelected()) {
-				return figureButton.buildFigure(toolBar.getLineWidth(), toBackendColor(toolBar.getLineColor()), toBackendColor(toolBar.getFillColor()), startPoint, eventPoint);
+				return figureButton.build(toolBar.getLineWidth(), toBackendColor(toolBar.getLineColor()), toBackendColor(toolBar.getFillColor()), startPoint, eventPoint, gc);
 			}
 		}
 		return null;
@@ -277,22 +279,7 @@ public class PaintPane extends BorderPane {
 		gc.setStroke(canvasState.selectedFigures().contains(figure) ? FIGURE_SELECTION_LINE_COLOR : toFxColor(figure.getLineColor()));
 		gc.setLineWidth(figure.getLineWidth());
 		gc.setFill(toFxColor(figure.getFillColor()));
-		if (figure instanceof Rectangle ) {
-			Rectangle rectangle = (Rectangle) figure;
-			gc.fillRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
-					Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-			gc.strokeRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
-					Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-		} else if (figure instanceof Ellipse ) {
-			Ellipse ellipse = (Ellipse) figure;
-			double dx = ellipse.getDx();
-			double dy = ellipse.getDy();
-			gc.fillOval(ellipse.getCenterPoint().getX() - (dx/2), ellipse.getCenterPoint().getY() - (dy/2), dx, dy);
-			gc.strokeOval(ellipse.getCenterPoint().getX() - (dx/2), ellipse.getCenterPoint().getY() - (dy/2), dx, dy);
-		} else if (figure instanceof Line) {
-			Line line = (Line) figure;
-			gc.strokeLine(line.getStart().getX(), line.getStart().getY(), line.getEnd().getX(), line.getEnd().getY());
-		}
+		figure.draw();
 	}
 
 	// Actualiza el mensaje de estado (Status Label)
