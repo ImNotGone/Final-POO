@@ -3,7 +3,7 @@ package frontend;
 import backend.CanvasState;
 import backend.model.*;
 import frontend.buttons.FigureToggleButton;
-import frontend.model.DrawableRectange;
+import frontend.model.DrawableRectangle;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -237,7 +237,7 @@ public class PaintPane extends BorderPane {
 			// Si está activo el botón de selección creamos el rectángulo de selección
 			// si no iteramos por los botones para ver que figura creamos
 			if (toolBar.isSelectionButtonSelected()) {
-				currentFigure = new DrawableRectange(SELECTION_RECTANGLE_LINE_WIDTH, SELECTION_RECTANGLE_LINE_COLOR, SELECTION_RECTANGLE_FILL_COLOR, startPoint, eventPoint, gc);
+				currentFigure = new DrawableRectangle(SELECTION_RECTANGLE_LINE_WIDTH, SELECTION_RECTANGLE_LINE_COLOR, SELECTION_RECTANGLE_FILL_COLOR, startPoint, eventPoint, gc);
 			} else {
 				currentFigure = createFigure(eventPoint);
 			}
